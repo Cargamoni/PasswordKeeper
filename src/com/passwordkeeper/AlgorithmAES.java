@@ -1,7 +1,6 @@
-package com.company;
+package com.passwordkeeper;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;

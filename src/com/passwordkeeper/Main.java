@@ -1,4 +1,4 @@
-package com.company;
+package com.passwordkeeper;
 
 public class Main {
 
