@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<user userpass="">
-    <userPass category="">
-
+<user userpass="parolaburayagelecek">
+    <userPass category="socialmedia">
+        <cipherText type="Instagram">cipherbase64hashiburayagelecek</cipherText>
+    </userPass>
+    <userPass category="mail">
+        <cipherText type="Google">cipherbase64hashiburayagelecek</cipherText>
+    </userPass>
+    <userPass category="others">
+        <cipherText type="GitHub">cipherbase64hashiburayagelecek</cipherText>
     </userPass>
 </user>
