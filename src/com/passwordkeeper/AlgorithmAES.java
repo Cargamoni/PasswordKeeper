@@ -30,7 +30,8 @@ public class AlgorithmAES
     public static final String Algorithm = "AES";
     private static String ThePassword;
     private static String EnteredPassword;
-    public static final String KeyFile = "files/secret";
+    private static final String KeyFile = "files/secret";
+    private static final String PasswordDocsPath = "files/password.xml";
 
     public AlgorithmAES()
     {
@@ -78,13 +79,14 @@ public class AlgorithmAES
     public void MD5PassowrdDocsCreator()
     {
         File PasswordFile;
-        try {
-            PasswordFile = CreateFile(KeyFile);
-            OutputStreamWriter PasswordFileWriter = new OutputStreamWriter(new FileOutputStream(PasswordFile), StandardCharsets.UTF_8);
-            PasswordFileWriter.write(MD5HashGenerator(EnteredPassword));
-            PasswordFileWriter.close();
-
-        } catch (IOException e) { e.printStackTrace();}
+//        try {
+////            PasswordFile = CreateFile(KeyFile);
+////            OutputStreamWriter PasswordFileWriter = new OutputStreamWriter(new FileOutputStream(PasswordFile), StandardCharsets.UTF_8);
+////            PasswordFileWriter.write(MD5HashGenerator(EnteredPassword));
+////            PasswordFileWriter.close();
+//        } catch (IOException e) { e.printStackTrace();}
+            OperationXML Maker = new OperationXML();
+            Maker.NewXMLCreator(MD5HashGenerator(EnteredPassword), PasswordDocsPath);
     }
 
     public Boolean MD5PasswordChecker()
@@ -95,18 +97,6 @@ public class AlgorithmAES
         return false;
     }
 
-    public File CreateFile(String FileName)
-    {
-        File ReadFile = new File(FileName);
-        try {
-            if (ReadFile.getParentFile() != null) {
-                ReadFile.getParentFile().mkdir();
-                ReadFile.createNewFile();
-            }
-        }catch (IOException e) { e.printStackTrace(); }
-
-        return ReadFile;
-    }
 
     public String ReadData(String FileAddress)
     {
@@ -128,7 +118,8 @@ public class AlgorithmAES
 
     public boolean AreKeysPresent()
     {
-        File DesKey = new File(KeyFile);
+        //File DesKey = new File(KeyFile);
+        File DesKey = new File(PasswordDocsPath);
         if(DesKey.exists() && DesKey.length() != 0)
             return true;
         return false;

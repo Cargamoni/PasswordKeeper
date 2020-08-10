@@ -19,10 +19,10 @@ import java.io.File;
 public class OperationXML {
 
     // Yeni Oluşturacak
-    public void NewXMLCreator(String MD5FromPassword)
+    public void NewXMLCreator(String MD5FromPassword, String XMLPath)
     {
         try {
-            // XML Dosyasının oluşturulması
+            //XML Dosyasının oluşturulması
             DocumentBuilderFactory Factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder Builder = Factory.newDocumentBuilder();
             Document NewXMLDocument = Builder.newDocument();
@@ -34,13 +34,18 @@ public class OperationXML {
             // Kökün Belirleyicisi
             Attr RootAttribute = NewXMLDocument.createAttribute("userpass");
             RootAttribute.setValue(MD5FromPassword);
+            RootElement.setAttributeNode(RootAttribute);
 
             // XML dosyasını oluştur.
             TransformerFactory TFacktory = TransformerFactory.newInstance();
             Transformer OptimusPrime = TFacktory.newTransformer();
             DOMSource Source = new DOMSource(NewXMLDocument);
-            StreamResult Result = new StreamResult(new File("files/passwords.xml"));
+            StreamResult Result = new StreamResult(new File(XMLPath));
             OptimusPrime.transform(Source, Result);
+
+            // Output to console for testing
+            StreamResult consoleResult = new StreamResult(System.out);
+            OptimusPrime.transform(Source, consoleResult);
 
 
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
