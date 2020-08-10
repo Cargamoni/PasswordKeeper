@@ -1,25 +1,47 @@
 package com.passwordkeeper;
 
+import javax.swing.*;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        String EnteredPassword;
-        Scanner Pass = new Scanner(System.in);
-        AlgorithmAES ObjectAES = new AlgorithmAES(Pass.nextLine());
+        AlgorithmAES ObjectAES = new AlgorithmAES();
+        Scanner Pass;
+        while(true)
+        {
+            if(!ObjectAES.AreKeysPresent())
+            {
+                System.out.print("There is no password please enter a password : ");
+                Pass = new Scanner(System.in);
+                ObjectAES = new AlgorithmAES(Pass.nextLine());
+                ObjectAES.MD5PassowrdDocsCreator();
+                System.out.print("New password generated.");
+            }
+            else
+            {
+                System.out.print("Please enter your Password : ");
+                Pass = new Scanner(System.in);
+                ObjectAES = new AlgorithmAES(Pass.nextLine());
+                if(ObjectAES.MD5PasswordChecker())
+                {
 
-        String PlainText = ObjectAES.ReadData("files/PlainText.txt");
-        System.out.println("Plain Text: " + PlainText);
+                    String PlainText = ObjectAES.ReadData("files/PlainText.txt");
+                    System.out.println("Plain Text: " + PlainText);
 
-//        if(!ObjectAES.AreKeysPresent())
-//            ObjectAES.GenerateKeyAES();
+                    String Result = ObjectAES.Encryption("files/PlainText.txt", "files/CipherText.txt");
+                    System.out.println(Result);
 
-        String Result = ObjectAES.Encryption("files/PlainText.txt", "files/CipherText.txt");
-        System.out.println(Result);
-
-        Result = ObjectAES.Decryption("files/CipherText.txt", "files/PlainText.txt");
-        System.out.println(Result);
+                    Result = ObjectAES.Decryption("files/CipherText.txt", "files/PlainText.txt");
+                    System.out.println(Result);
+                }
+                else
+                {
+                    System.out.print("You entered wrong password !");
+                    return;
+                }
+            }
+        }
     }
 }

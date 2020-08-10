@@ -3,6 +3,8 @@ package com.passwordkeeper;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -21,21 +23,30 @@ public class AlgorithmAES
     // Encyript ve Decyript sadece Parola ile Yapılacak.
     // Encyript edilen dosyaya yazılacak, Decyript edilen Clipboard üzerine kopyalanacak.
 
+    // Ekstralar
+    // Yeni oluşturmada çift parola istenecek
+
 
     public static SecretKey KeyAES = null;
     public static final String Algorithm = "AES";
     private static String ThePassword;
-    public static final String KeyFile = "files/secret.key";
+    private static String EnteredPassword;
+    public static final String KeyFile = "files/secret";
+
+    public AlgorithmAES()
+    {
+
+    }
 
     public AlgorithmAES(String Password)
     {
+        EnteredPassword = Password;
         GenerateKeyAES(Password);
     }
 
     public String MD5HashGenerator(String Text)
     {
         try {
-
             // Static getInstance method is called with hashing MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
 
@@ -59,6 +70,26 @@ public class AlgorithmAES
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void MD5PassowrdDocsCreator()
+    {
+        File PasswordFile;
+        try {
+            PasswordFile = CreateFile(KeyFile);
+            OutputStreamWriter PasswordFileWriter = new OutputStreamWriter(new FileOutputStream(PasswordFile), StandardCharsets.UTF_8);
+            PasswordFileWriter.write(MD5HashGenerator(EnteredPassword));
+            PasswordFileWriter.close();
+
+        } catch (IOException e) { e.printStackTrace();}
+    }
+
+    public Boolean MD5PasswordChecker()
+    {
+        String HashedPassword = ReadData(KeyFile);
+        if(HashedPassword.contentEquals(MD5HashGenerator(EnteredPassword)))
+            return true;
+        return false;
     }
 
     public File CreateFile(String FileName)
@@ -92,17 +123,17 @@ public class AlgorithmAES
         return OutFile.toString();
     }
 
-//    public boolean AreKeysPresent()
-//    {
-//        File DesKey = new File(KeyFile);
-//        if(DesKey.exists())
-//            return true;
-//        return false;
-//    }
+    public boolean AreKeysPresent()
+    {
+        File DesKey = new File(KeyFile);
+        if(DesKey.exists() && DesKey.length() != 0)
+            return true;
+        return false;
+    }
 
     public SecretKey GenerateKeyAES(String Password)
     {
-        File FileAES;
+//        File FileAES;
         KeyGenerator KeyMaker;
         SecureRandom seed = new SecureRandom();
         KeySpec spec;
