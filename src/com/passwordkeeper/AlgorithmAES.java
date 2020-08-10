@@ -4,12 +4,11 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
+import java.util.Base64;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -44,6 +43,7 @@ public class AlgorithmAES
         GenerateKeyAES(Password);
     }
 
+    /// Parolayı MD5'e dönüştürmek için kullanılır.
     public String MD5HashGenerator(String Text)
     {
         try {
@@ -72,6 +72,9 @@ public class AlgorithmAES
         }
     }
 
+    /// Eğer parola daha önce oluşturulmadıysa bu fonksiyon dosyayı oluşturur
+    // parolanın hashlenmiş halini dosya içerisine yazdırır. Burası XML'e
+    // yazdırılacak şekilde düzenlenecek !!!
     public void MD5PassowrdDocsCreator()
     {
         File PasswordFile;
@@ -148,42 +151,37 @@ public class AlgorithmAES
             KeyAES = new SecretKeySpec(tmp.getEncoded(), Algorithm);
 
             return KeyAES;
-
-//            KeyMaker = KeyGenerator.getInstance(Algorithm);
-//            KeyMaker.init(256);
-//            KeyAES = KeyMaker.generateKey();
-
-//            FileAES = CreateFile(KeyFile);
-//            ObjectOutputStream SecretKeyOut = new ObjectOutputStream(new FileOutputStream(FileAES));
-//            SecretKeyOut.writeObject(KeyAES);
-//            SecretKeyOut.close();
-
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) { e.printStackTrace();}
         return null;
     }
 
-    public String Encryption (String PlainText, String CipherText)
+    /// Aldığı veriyi AES Algoritmasını kullanarak şifreleyip, Base64 ile Encode işleminden geçirip
+    // daha sonra XML'e göndermek için kullanılacak. Şifrelemeyi sadece parolalar üzerinde yapacaktır.
+    // Şifrelemede oluşturulan Key paroladan elde edilir, bu parola kaybedilirse geri döndürme
+    // gerçekleştirilemez.
+    public String Encryption (String PlainText)
     {
         try {
-//            ObjectInputStream InputStream = new ObjectInputStream(new FileInputStream(KeyFile));
-//            final SecretKey KeyAES = (SecretKey) InputStream.readObject();
-//            InputStream.close();
-
             Cipher CipherAES = Cipher.getInstance(Algorithm);
             CipherAES.init(Cipher.ENCRYPT_MODE,KeyAES);
 
-            FileInputStream IStreamFile = new FileInputStream(PlainText);
-            FileOutputStream OStreamFile = new FileOutputStream(CipherText);
-            CipherOutputStream CStreamFile = new CipherOutputStream(OStreamFile, CipherAES);
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-            byte[] block = new byte[64];
-            int i;
-            while((i = IStreamFile.read(block)) != -1)
-                CStreamFile.write(block,0,i);
+            byte[] data;
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                 DigestOutputStream dos = new DigestOutputStream(bos, digest);
+                 CipherOutputStream cos = new CipherOutputStream(dos, CipherAES)) {
+                try (ObjectOutputStream oos = new ObjectOutputStream(cos)) { oos.writeObject(PlainText); }
+                data = bos.toByteArray();
+            }
 
-            CStreamFile.close();
-            IStreamFile.close();
-            CStreamFile.close();
+            //Debug
+            //System.out.println(Arrays.toString(data));
+            //System.out.println(new String(encoded));
+
+            //Burası XML'e yazdırılacak.
+            byte[] encoded = Base64.getEncoder().encode(data);
+            Decryption(encoded);
 
             return "Encryption Complete";
 
@@ -193,32 +191,37 @@ public class AlgorithmAES
         }
     }
 
-    public String Decryption (String CipherText, String PlainText)
+    /// XML üzerinden okunan veriyi Decryption işlemine sokup, parolayı açığa çıkarmak için kullanılır.
+    // Okunan veri daha sonra clipboard'a kopyalanmak için kullanılacak.
+    public String Decryption (byte[] CipherAsBase64)
     {
         try {
-//            ObjectInputStream InputStream = new ObjectInputStream(new FileInputStream(KeyFile));
-//            final SecretKey KeyAES = (SecretKey)InputStream.readObject();
-//            InputStream.close();
 
             Cipher CipherAES = Cipher.getInstance(Algorithm);
             CipherAES.init(Cipher.DECRYPT_MODE, KeyAES);
+            byte[] EncodedKey = KeyAES.getEncoded();
+            byte[] DecodedCipher = Base64.getDecoder().decode(CipherAsBase64);
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-            FileInputStream IStreamFile = new FileInputStream(CipherText);
-            FileOutputStream OStreamFile = new FileOutputStream(PlainText);
-            CipherInputStream CStreamFile = new CipherInputStream(IStreamFile,CipherAES);
+            SecretKeySpec scs = new SecretKeySpec(EncodedKey, Algorithm);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            CipherOutputStream CipherOut = new CipherOutputStream(baos, CipherAES);
+            CipherOut.write(DecodedCipher);
+            CipherOut.close();
+            baos.close();
 
-            byte[] block = new byte[64];
-            int i;
+            byte[] Decrypted = baos.toByteArray();
 
-            while((i = CStreamFile.read(block)) != -1)
-                OStreamFile.write(block,0,i);
+            //Debug
+//            System.out.println(Arrays.toString(Decrypted));
+//            System.out.println("Decryption : " + new String(Decrypted));
 
-            CStreamFile.close();
-            IStreamFile.close();
-            CStreamFile.close();
+            String ExportData = new String(Decrypted, 7, Decrypted.length -7, "UTF-8");
+            System.out.println("Decryped Data : " +ExportData);
 
-            String PlainTextAgain = ReadData(PlainText);
-            return "Decryption = " + PlainTextAgain;
+            // Bu veri Clipboard'a yazdırılacak
+            return ExportData;
+
 
         } catch (Exception e) {
             e.printStackTrace();

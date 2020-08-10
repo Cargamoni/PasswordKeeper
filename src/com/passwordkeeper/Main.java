@@ -27,14 +27,16 @@ public class Main {
                 if(ObjectAES.MD5PasswordChecker())
                 {
 
-                    String PlainText = ObjectAES.ReadData("files/PlainText.txt");
-                    System.out.println("Plain Text: " + PlainText);
+                    //String PlainText = ObjectAES.ReadData("files/PlainText.txt");
+                    //System.out.println("Plain Text: " + PlainText);
 
-                    String Result = ObjectAES.Encryption("files/PlainText.txt", "files/CipherText.txt");
+                    System.out.print("Enter a Plain Text : ");
+                    Pass = new Scanner(System.in);
+                    String Result = ObjectAES.Encryption(Pass.nextLine());
                     System.out.println(Result);
 
-                    Result = ObjectAES.Decryption("files/CipherText.txt", "files/PlainText.txt");
-                    System.out.println(Result);
+                    //Result = ObjectAES.Decryption("files/CipherText.txt");
+                    //System.out.println(Result);
                 }
                 else
                 {
