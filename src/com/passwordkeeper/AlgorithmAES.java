@@ -16,11 +16,11 @@ import javax.crypto.spec.SecretKeySpec;
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Parolanın MD5'li Hali Dosyada Tutulacak
     // Bu Dosya yoksa yeni parola belirlenecek
-    // Giriş Parolanın MD5'e dönüştürülerek yapılacak ve Dosyadan Kontrol Edilcecek
     // Encyript ve Decyript sadece Parola ile Yapılacak.
     // Encyript edilen dosyaya yazılacak, Decyript edilen Clipboard üzerine kopyalanacak.
+    // XML üzerinden okuma yapılacak, parola artık xml'den çekilecek
+    // Parola ekleme işlemi yapılacak.
 
     // Ekstralar
     // Yeni oluşturmada çift parola istenecek
