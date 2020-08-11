@@ -32,14 +32,16 @@ public class AlgorithmAES
     private static String EnteredPassword;
     private static final String KeyFile = "files/secret";
     private static final String PasswordDocsPath = "files/password.xml";
+    OperationXML XMLOperations;
 
     public AlgorithmAES()
     {
-
+        XMLOperations = new OperationXML();
     }
 
     public AlgorithmAES(String Password)
     {
+        XMLOperations = new OperationXML();
         EnteredPassword = Password;
         GenerateKeyAES(Password);
     }
@@ -85,14 +87,13 @@ public class AlgorithmAES
 ////            PasswordFileWriter.write(MD5HashGenerator(EnteredPassword));
 ////            PasswordFileWriter.close();
 //        } catch (IOException e) { e.printStackTrace();}
-            OperationXML Maker = new OperationXML();
-            Maker.NewXMLCreator(MD5HashGenerator(EnteredPassword), PasswordDocsPath);
+        XMLOperations.NewXMLCreator(MD5HashGenerator(EnteredPassword), PasswordDocsPath);
     }
 
     public Boolean MD5PasswordChecker()
     {
-        String HashedPassword = ReadData(KeyFile);
-        if(HashedPassword.contentEquals(MD5HashGenerator(EnteredPassword)))
+        String HashedPassword = XMLOperations.PasswordReaderXML(PasswordDocsPath);
+        if(HashedPassword.length() > 0 && HashedPassword.contentEquals(MD5HashGenerator(EnteredPassword)))
             return true;
         return false;
     }

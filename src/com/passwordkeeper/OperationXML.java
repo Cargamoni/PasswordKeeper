@@ -1,8 +1,7 @@
 package com.passwordkeeper;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.io.File;
+import java.io.IOException;
 
 public class OperationXML {
 
@@ -32,7 +32,7 @@ public class OperationXML {
             NewXMLDocument.appendChild(RootElement);
 
             // Kökün Belirleyicisi
-            Attr RootAttribute = NewXMLDocument.createAttribute("userpass");
+            Attr RootAttribute = NewXMLDocument.createAttribute("userPass");
             RootAttribute.setValue(MD5FromPassword);
             RootElement.setAttributeNode(RootAttribute);
 
@@ -52,6 +52,27 @@ public class OperationXML {
             e.printStackTrace();
         } catch (TransformerException e) {
             e.printStackTrace();
+        }
+    }
+
+    public String PasswordReaderXML (String Path)
+    {
+        File InputFile = new File(Path);
+        {
+            try {
+                DocumentBuilderFactory Factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder Builder = Factory.newDocumentBuilder();
+                Document ReadXMLDocument = Builder.parse(InputFile);
+                ReadXMLDocument.getDocumentElement().normalize();
+                return ReadXMLDocument.getDocumentElement().getAttributeNode("userPass").getValue();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
+            }
+            return "";
         }
     }
 
