@@ -1,11 +1,15 @@
 package com.passwordkeeper;
 
+import org.xml.sax.SAXException;
+
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 	// write your code here
         AlgorithmAES ObjectAES = new AlgorithmAES();
         Scanner Pass;
@@ -26,17 +30,23 @@ public class Main {
                 ObjectAES = new AlgorithmAES(Pass.nextLine());
                 if(ObjectAES.MD5PasswordChecker())
                 {
+                    if(ObjectAES.CategoryChecker)
+                    {
+//                        System.out.print("Enter a Plain Text : ");
+//                        Pass = new Scanner(System.in);
+//                        String Result = ObjectAES.Encryption(Pass.nextLine());
+//                        System.out.println(Result);
 
-                    //String PlainText = ObjectAES.ReadData("files/PlainText.txt");
-                    //System.out.println("Plain Text: " + PlainText);
+                        ///Buraya Kategori Listeleyici ve Seçici gelecek
 
-                    System.out.print("Enter a Plain Text : ");
-                    Pass = new Scanner(System.in);
-                    String Result = ObjectAES.Encryption(Pass.nextLine());
-                    System.out.println(Result);
+                        ObjectAES.NewPasswordAdder();
+                    }
+                    else
+                    {
+                        System.out.println("Category Not Found, Add a new One !");
+                        ObjectAES.NewCategoryAdder();
+                    }
 
-                    //Result = ObjectAES.Decryption("files/CipherText.txt");
-                    //System.out.println(Result);
                 }
                 else
                 {
