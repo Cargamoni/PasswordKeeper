@@ -3,6 +3,9 @@ package com.passwordkeeper;
 import jdk.jfr.Category;
 import org.xml.sax.SAXException;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.math.BigInteger;
@@ -16,16 +19,14 @@ import java.util.Scanner;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.sound.sampled.Clip;
+import javax.sql.rowset.spi.XmlReader;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Bu Dosya yoksa yeni parola belirlenecek
-    // Encyript ve Decyript sadece Parola ile Yapılacak.
     // Encyript edilen dosyaya yazılacak, Decyript edilen Clipboard üzerine kopyalanacak.
-    // XML üzerinden okuma yapılacak, parola artık xml'den çekilecek
-    // Parola ekleme işlemi yapılacak.
 
     // Ekstralar
     // Yeni oluşturmada çift parola istenecek
@@ -55,6 +56,7 @@ public class AlgorithmAES
         CategoryChecker = XMLOperations.CategoryCheckerXML(PasswordDocsPath);
     }
 
+    /// XML içerisine Kategori ekleme işlemini yapan Kod burası.
     public void NewCategoryAdder()
     {
         if(XMLOperations.AddCategoryXML(PasswordDocsPath))
@@ -75,6 +77,7 @@ public class AlgorithmAES
             System.out.println("Category not Created !");
     }
 
+    /// XML içerisine kategoriye ait yeni parola ekleme işlemini gerçekleştirir.
     public void NewPasswordAdder()
     {
         Scanner Motion = new Scanner(System.in);
@@ -95,6 +98,32 @@ public class AlgorithmAES
         }
         else
         System.out.println("Category not Created !");
+    }
+
+    /// XML içerisinden Kategorileri listeler.
+    public void CategoryLister() throws ParserConfigurationException, SAXException, IOException
+    {
+        XMLOperations.CategoryListerXML(PasswordDocsPath);
+    }
+
+    public void CopyPasswordToClipBoard() throws IOException, SAXException, ParserConfigurationException
+    {
+        System.out.println("Welcome to Reader");
+        CategoryLister();
+        Scanner Input = new Scanner(System.in);
+        System.out.print("Please Select a Category (Just Number): ");
+        int CategoryID = Integer.parseInt(Input.nextLine());
+
+        XMLOperations.CategoryPasswordListerXML(PasswordDocsPath, CategoryID);
+        System.out.print("Wich Password do you want to Copy (Just Number) : ");
+        int TypeID = Integer.parseInt(Input.nextLine());
+        byte[] CipherTextFromXML = XMLOperations.GetChoosenPasswordXML(PasswordDocsPath, CategoryID, TypeID);
+        String YourPasswordIs = Decryption(CipherTextFromXML);
+
+        StringSelection SelectPassword = new StringSelection(YourPasswordIs);
+        Clipboard ClipBoard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        ClipBoard.setContents(SelectPassword,SelectPassword);
+        System.out.println("Your password copied to clipboard. Press Ctrl+V for paste !");
     }
 
     /// Parolayı MD5'e dönüştürmek için kullanılır.
@@ -239,11 +268,11 @@ public class AlgorithmAES
 //            System.out.println("Decryption : " + new String(Decrypted));
 
             String ExportData = new String(Decrypted, 7, Decrypted.length -7, "UTF-8");
-            System.out.println("Decryped Data : " +ExportData);
 
-            // Bu veri Clipboard'a yazdırılacak
+            //Debug
+            //System.out.println("Decryped Data : " +ExportData);
+
             return ExportData;
-
 
         } catch (Exception e) {
             e.printStackTrace();

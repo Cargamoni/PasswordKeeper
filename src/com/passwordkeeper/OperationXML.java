@@ -1,5 +1,6 @@
 package com.passwordkeeper;
 
+import jdk.jfr.Category;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -65,9 +66,149 @@ public class OperationXML {
         return ReadXMLDocument.getDocumentElement().getAttributeNode("userPass").getValue();
     }
 
+    // Kaç adet kategori olduğunu alır ve döndürür.
     public Boolean CategoryCheckerXML(String Path) throws IOException, SAXException, ParserConfigurationException
     {
         return ReadFromXML(Path).getDocumentElement().getChildNodes().getLength() > 0;
+    }
+
+    /// XML içerisindeni Kategorileri Listeler
+    public void CategoryListerXML(String Path) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        ReadXMLDocument.getDocumentElement().normalize();
+        NodeList CategoryList = ReadXMLDocument.getElementsByTagName("userPass");
+
+        for (int i = 0; i< CategoryList.getLength(); i++)
+        {
+            Node CategoryNode = CategoryList.item(i);
+            if(CategoryNode.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element CategoryElement = (Element) CategoryNode;
+                System.out.println(String.valueOf(i+1) + "." + CategoryElement.getAttribute("category"));
+            }
+        }
+    }
+
+    /// XML içerisinden Kategori adını geri döndürür.
+    public String CategoryReturnerFromXML(String Path, int CategoryID) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        ReadXMLDocument.getDocumentElement().normalize();
+        NodeList CategoryList = ReadXMLDocument.getElementsByTagName("userPass");
+
+        for (int i = 0; i< CategoryList.getLength(); i++)
+        {
+            Node CategoryNode = CategoryList.item(i);
+            if(CategoryNode.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element CategoryElement = (Element) CategoryNode;
+                if(CategoryID-1 == i)
+                    return CategoryElement.getAttribute("category");
+            }
+        }
+        return "";
+
+    }
+
+    /// XML içerisinden seçilen kategoriye ait olan parola isimlerini getirir.
+    public void CategoryPasswordListerXML(String Path, int CategoryID) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        Element GetRoot = ReadXMLDocument.getDocumentElement();
+
+        String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
+
+        NodeList nList = GetRoot.getElementsByTagName("userPass");
+        System.out.println("----------------------------");
+
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+
+            //Debug
+            //System.out.print("\nCurrent Element :");
+            //System.out.println(nNode.getNodeName());
+
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+
+                //Debug
+                //System.out.print("Attribute : ");
+                //System.out.println(eElement.getAttribute("category"));
+
+                if(eElement.getAttribute("category").equals(CategoryName))
+                {
+                    NodeList carNameList = eElement.getElementsByTagName("cipherText");
+
+                    for (int count = 0; count < carNameList.getLength(); count++) {
+                        Node node1 = carNameList.item(count);
+
+                        if (node1.getNodeType() == node1.ELEMENT_NODE) {
+                            Element car = (Element) node1;
+
+                            // Debug
+                            //System.out.print("Pass value : ");
+                            //System.out.println(car.getTextContent());
+                            System.out.print(String.valueOf(count+1) + ". Pass : ");
+                            System.out.println(car.getAttribute("type"));
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public byte[] GetChoosenPasswordXML(String Path, int CategoryID, int TypeID) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        Element GetRoot = ReadXMLDocument.getDocumentElement();
+
+        String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
+
+        NodeList nList = GetRoot.getElementsByTagName("userPass");
+        System.out.println("----------------------------");
+
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+
+            //Debug
+            //System.out.print("\nCurrent Element :");
+            //System.out.println(nNode.getNodeName());
+
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+
+                //Debug
+                //System.out.print("Attribute : ");
+                //System.out.println(eElement.getAttribute("category"));
+
+                if(eElement.getAttribute("category").equals(CategoryName))
+                {
+                    NodeList carNameList = eElement.getElementsByTagName("cipherText");
+
+                    for (int count = 0; count < carNameList.getLength(); count++) {
+                        Node node1 = carNameList.item(count);
+
+                        if (node1.getNodeType() == node1.ELEMENT_NODE) {
+                            Element car = (Element) node1;
+
+                            // Debug
+                            //System.out.print("Pass value : ");
+                            if(count == TypeID-1)
+                            {
+                                byte[] cipher = car.getTextContent().getBytes();
+                                return cipher;
+                            }
+                            //System.out.println(car.getTextContent());
+                            //System.out.print(String.valueOf(count) + ". Pass : ");
+                            //System.out.println(car.getAttribute("type"));
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /// XML Dosyası İçerisine Category Ekleme İşlemini Yapar.
@@ -102,6 +243,7 @@ public class OperationXML {
         }
     }
 
+    /// XML Dosyası içerisine Parola ekler.
     public Boolean AddPasswordToCategoryXML(String Path, String Category, String ThePassword)
     {
         try
@@ -159,9 +301,4 @@ public class OperationXML {
         return Builder.parse(InputFile);
     }
 
-    // XML'e Yazacak
-    public void WriteToXML()
-    {
-
-    }
 }
