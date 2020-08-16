@@ -26,7 +26,8 @@ import javax.xml.parsers.ParserConfigurationException;
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Encyript edilen dosyaya yazılacak, Decyript edilen Clipboard üzerine kopyalanacak.
+    // Debug Yapılacak Her Bir Adım Baştan Deneneck
+    // Arayüz oluşturulacak
 
     // Ekstralar
     // Yeni oluşturmada çift parola istenecek
