@@ -18,8 +18,9 @@ public class Main {
             if(!ObjectAES.AreKeysPresent())
             {
                 System.out.print("There is no password please enter a password : ");
-                ObjectAES = new AlgorithmAES(Pass.nextLine());
-                ObjectAES.MD5PassowrdDocsCreator();
+                String ThePassword = Pass.nextLine();
+                ObjectAES.MD5PassowrdDocsCreator(ThePassword);
+                ObjectAES = new AlgorithmAES(ThePassword);
                 System.out.print("New password generated.");
             }
             else

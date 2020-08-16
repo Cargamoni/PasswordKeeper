@@ -10,6 +10,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
@@ -60,22 +62,18 @@ public class AlgorithmAES
     /// XML içerisine Kategori ekleme işlemini yapan Kod burası.
     public void NewCategoryAdder()
     {
-        if(XMLOperations.AddCategoryXML(PasswordDocsPath))
-        {
-            System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
-            Scanner Motion = new Scanner(System.in);
-            char MotionChar = Motion.nextLine().toCharArray()[0];
-            if(MotionChar == '1')
-                NewCategoryAdder();
-            else if (MotionChar == '2')
-                NewPasswordAdder();
-            else if (MotionChar == '3')
-                return;
-            else
-                System.out.println("Wrong Input");
-        }
+        XMLOperations.AddCategoryXML(PasswordDocsPath);
+        System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
+        Scanner Motion = new Scanner(System.in);
+        char MotionChar = Motion.nextLine().toCharArray()[0];
+        if(MotionChar == '1')
+            NewCategoryAdder();
+        else if (MotionChar == '2')
+            NewPasswordAdder();
+        else if (MotionChar == '3')
+            return;
         else
-            System.out.println("Category not Created !");
+            System.out.println("Wrong Input");
     }
 
     /// XML içerisine kategoriye ait yeni parola ekleme işlemini gerçekleştirir.
@@ -84,21 +82,17 @@ public class AlgorithmAES
         Scanner Motion = new Scanner(System.in);
         System.out.print("Which Category : ");
         String CategoryName = Motion.nextLine();
-        if(XMLOperations.AddPasswordToCategoryXML(PasswordDocsPath, CategoryName, EnteredPassword))
-        {
-            System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
-            char MotionChar = Motion.nextLine().toCharArray()[0];
-            if(MotionChar == '1')
-                NewCategoryAdder();
-            else if (MotionChar == '2')
-                NewPasswordAdder();
-            else if (MotionChar == '3')
-                return;
-            else
-                System.out.println("Wrong Input");
-        }
+        XMLOperations.AddPasswordToCategoryXML(PasswordDocsPath, CategoryName, EnteredPassword);
+        System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
+        char MotionChar = Motion.nextLine().toCharArray()[0];
+        if(MotionChar == '1')
+            NewCategoryAdder();
+        else if (MotionChar == '2')
+            NewPasswordAdder();
+        else if (MotionChar == '3')
+            return;
         else
-        System.out.println("Category not Created !");
+            System.out.println("Wrong Input");
     }
 
     /// XML içerisinden Kategorileri listeler.
@@ -159,9 +153,12 @@ public class AlgorithmAES
     /// Eğer parola daha önce oluşturulmadıysa bu fonksiyon dosyayı oluşturur
     // parolanın hashlenmiş halini dosya içerisine yazdırır. Burası XML'e
     // yazdırılacak şekilde düzenlenecek !!!
-    public void MD5PassowrdDocsCreator()
+    public void MD5PassowrdDocsCreator(String ThePassword)
     {
-        XMLOperations.NewXMLCreator(MD5HashGenerator(EnteredPassword), PasswordDocsPath);
+        String FolderName = "files";
+        if(Files.notExists(Paths.get(FolderName)))
+            new File(FolderName).mkdir();
+        XMLOperations.NewXMLCreator(MD5HashGenerator(ThePassword), PasswordDocsPath);
     }
 
     /// Parolayı XML üzerinden kontrol eder ve sonucu döndürür.

@@ -67,7 +67,7 @@ public class OperationXML {
     }
 
     // Kaç adet kategori olduğunu alır ve döndürür.
-    public Boolean CategoryCheckerXML(String Path) throws IOException, SAXException, ParserConfigurationException
+    public boolean CategoryCheckerXML(String Path) throws IOException, SAXException, ParserConfigurationException
     {
         return ReadFromXML(Path).getDocumentElement().getChildNodes().getLength() > 0;
     }
@@ -212,7 +212,7 @@ public class OperationXML {
     }
 
     /// XML Dosyası İçerisine Category Ekleme İşlemini Yapar.
-    public Boolean AddCategoryXML(String Path)
+    public void AddCategoryXML(String Path)
     {
         try
         {
@@ -236,15 +236,15 @@ public class OperationXML {
             StreamResult Result = new StreamResult(new File(Path));
             OptimusPrime.transform(Source, Result);
 
-            return true;
+            System.out.println("Category Added.");
         } catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
-            return false;
+            System.out.println("Category Not Added.");
         }
     }
 
     /// XML Dosyası içerisine Parola ekler.
-    public Boolean AddPasswordToCategoryXML(String Path, String Category, String ThePassword)
+    public void AddPasswordToCategoryXML(String Path, String Category, String ThePassword)
     {
         try
         {
@@ -285,10 +285,10 @@ public class OperationXML {
             StreamResult Result = new StreamResult(new File(Path));
             OptimusPrime.transform(Source, Result);
 
-            return true;
+            System.out.println("Password Added.");
         } catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
-            return false;
+            System.out.println("Password Not Added.");
         }
     }
 
