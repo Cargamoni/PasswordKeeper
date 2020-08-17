@@ -11,14 +11,14 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
-	// write your code here
+	 //write your code here
         WelcomeFrame newFrame = new WelcomeFrame();
         newFrame.setVisible(true);
 
 //        AlgorithmAES ObjectAES = new AlgorithmAES();
 //        Scanner Pass = new Scanner(System.in);
-
-
+//
+//
 //        while(true)
 //        {
 //            if(!ObjectAES.AreKeysPresent())

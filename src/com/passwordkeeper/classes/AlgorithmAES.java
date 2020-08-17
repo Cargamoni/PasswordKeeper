@@ -103,6 +103,12 @@ public class AlgorithmAES
         return XMLOperations.CategoryListArrayXML(PasswordDocsPath);
     }
 
+    public String[] CategoryPasswordsReturner(int CategoryID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryPasswordArrayXML(PasswordDocsPath, CategoryID);
+    }
+
+
     public void CopyPasswordToClipBoard() throws IOException, SAXException, ParserConfigurationException
     {
         System.out.println("Welcome to Reader");
