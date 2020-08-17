@@ -30,6 +30,7 @@ public class AlgorithmAES
     // Yapılacaklar
     // Debug Yapılacak Her Bir Adım Baştan Deneneck
     // Arayüz oluşturulacak
+    // Parola silme, güncelleme yapılacak !!! 
 
     // Ekstralar
     // Yeni oluşturmada çift parola istenecek

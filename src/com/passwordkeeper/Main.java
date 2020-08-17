@@ -11,6 +11,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 	// write your code here
+        javaapplication1.WelcomeFrame newFrame = new javaapplication1.WelcomeFrame();
+        newFrame.setVisible(true);
+
         AlgorithmAES ObjectAES = new AlgorithmAES();
         Scanner Pass = new Scanner(System.in);
         while(true)
