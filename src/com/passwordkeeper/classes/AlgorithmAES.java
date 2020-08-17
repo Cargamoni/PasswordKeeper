@@ -1,28 +1,22 @@
-package com.passwordkeeper;
+package com.passwordkeeper.classes;
 
-import jdk.jfr.Category;
 import org.xml.sax.SAXException;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Scanner;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.sound.sampled.Clip;
-import javax.sql.rowset.spi.XmlReader;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class AlgorithmAES
@@ -30,7 +24,8 @@ public class AlgorithmAES
     // Yapılacaklar
     // Debug Yapılacak Her Bir Adım Baştan Deneneck
     // Arayüz oluşturulacak
-    // Parola silme, güncelleme yapılacak !!! 
+    // Parola silme, güncelleme yapılacak !!!
+    // Kategori silme, güncelleme yapılacak !!!
 
     // Ekstralar
     // Yeni oluşturmada çift parola istenecek
@@ -100,6 +95,12 @@ public class AlgorithmAES
     public void CategoryLister() throws ParserConfigurationException, SAXException, IOException
     {
         XMLOperations.CategoryListerXML(PasswordDocsPath);
+    }
+
+    /// XML içerisinden Kategorileri listeler.
+    public String[] CategoryListReturner() throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryListArrayXML(PasswordDocsPath);
     }
 
     public void CopyPasswordToClipBoard() throws IOException, SAXException, ParserConfigurationException

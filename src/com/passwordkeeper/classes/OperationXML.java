@@ -1,6 +1,5 @@
-package com.passwordkeeper;
+package com.passwordkeeper.classes;
 
-import jdk.jfr.Category;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -16,6 +15,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class OperationXML {
@@ -90,6 +91,32 @@ public class OperationXML {
         }
     }
 
+    /// XML içerisindeni Kategorileri dizi olarak döndürür.
+    public String[] CategoryListArrayXML(String Path) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        ReadXMLDocument.getDocumentElement().normalize();
+        NodeList CategoryList = ReadXMLDocument.getElementsByTagName("userPass");
+
+        List<String> CategoryArrayList = new ArrayList<>();
+        for (int i = 0; i< CategoryList.getLength(); i++)
+        {
+            Node CategoryNode = CategoryList.item(i);
+            if(CategoryNode.getNodeType() == Node.ELEMENT_NODE)
+            {
+                Element CategoryElement = (Element) CategoryNode;
+                //System.out.println(String.valueOf(i+1) + "." + CategoryElement.getAttribute("category"));
+                CategoryArrayList.add(CategoryElement.getAttribute("category"));
+            }
+        }
+
+        String[] CategoryArray = new String[CategoryArrayList.size()];
+        for(int i = 0; i< CategoryArray.length; i++)
+            CategoryArray[i] = CategoryArrayList.get(i);
+
+        return CategoryArray;
+    }
+
     /// XML içerisinden Kategori adını geri döndürür.
     public String CategoryReturnerFromXML(String Path, int CategoryID) throws IOException, SAXException, ParserConfigurationException
     {
@@ -157,6 +184,61 @@ public class OperationXML {
             }
         }
 
+    }
+
+    /// XML içerisinden seçilen kategoriye ait olan parola isimlerini Dizi olarak döndürür.
+    public String[] CategoryPasswordArrayXML(String Path, int CategoryID) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        Element GetRoot = ReadXMLDocument.getDocumentElement();
+
+        String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
+
+        List<String> CategoryPasswordList = new ArrayList<String>();
+
+        NodeList nList = GetRoot.getElementsByTagName("userPass");
+
+        for (int temp = 0; temp < nList.getLength(); temp++)
+        {
+            Node nNode = nList.item(temp);
+
+            //Debug
+            //System.out.print("\nCurrent Element :");
+            //System.out.println(nNode.getNodeName());
+
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+
+                //Debug
+                //System.out.print("Attribute : ");
+                //System.out.println(eElement.getAttribute("category"));
+
+                if(eElement.getAttribute("category").equals(CategoryName))
+                {
+                    NodeList carNameList = eElement.getElementsByTagName("cipherText");
+
+                    for (int count = 0; count < carNameList.getLength(); count++) {
+                        Node node1 = carNameList.item(count);
+
+                        if (node1.getNodeType() == node1.ELEMENT_NODE) {
+                            Element car = (Element) node1;
+
+                            // Debug
+                            //System.out.print("Pass value : ");
+                            //System.out.println(car.getTextContent());
+                            //System.out.print(String.valueOf(count+1) + ". Pass : ");
+                            //System.out.println(car.getAttribute("type"));
+                            CategoryPasswordList.add(car.getAttribute("type"));
+                        }
+                    }
+                }
+            }
+        }
+
+        String[] PasswordList = new String[CategoryPasswordList.size()];
+        for(int i = 0; i< PasswordList.length; i++)
+            PasswordList[i] = CategoryPasswordList.get(i);
+        return PasswordList;
     }
 
     public byte[] GetChoosenPasswordXML(String Path, int CategoryID, int TypeID) throws IOException, SAXException, ParserConfigurationException

@@ -3,7 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication1;
+package com.passwordkeeper.forms;
+
+import com.passwordkeeper.classes.AlgorithmAES;
+import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
@@ -34,6 +43,9 @@ public class WelcomeFrame extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
+        this.setTitle("PasswordKeeper");
+
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Enter Your Password");
@@ -43,7 +55,15 @@ public class WelcomeFrame extends javax.swing.JFrame {
         jButton1.setText("Enter");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                try {
+                    jButton1ActionPerformed(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -89,10 +109,62 @@ public class WelcomeFrame extends javax.swing.JFrame {
         );
 
         pack();
+
+        //Ekranın ortasında çıkması için
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int xLoc = (dim.width/2-this.getSize().width/2);
+        int yLoc = (dim.height/2)-this.getSize().height/2;
+        this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException {//GEN-FIRST:event_jButton1ActionPerformed
         /// Burada önce parolalar kontrol edilip, sonuca göre yeni form açılacak.
+        if(jPasswordField1.getPassword().length != 0 && jPasswordField1.getPassword().length != 0)
+        {
+//            System.out.println("Debug ::" + String.valueOf(jPasswordField1.getPassword()));
+//            System.out.println("Debug ::" + String.valueOf(jPasswordField2.getPassword()));
+            if(String.valueOf(jPasswordField1.getPassword()).equals(String.valueOf(jPasswordField2.getPassword())))
+            {
+                AlgorithmAES ObjectAES = new AlgorithmAES();
+                String ThePassword = "";
+                if(!ObjectAES.AreKeysPresent())
+                {
+                    System.out.print("There is no password please enter a password : ");
+                    ThePassword = String.valueOf(jPasswordField1.getPassword());
+                    ObjectAES.MD5PassowrdDocsCreator(ThePassword);
+                    ObjectAES = new AlgorithmAES(ThePassword);
+                    System.out.print("New password generated.");
+                    JOptionPane.showMessageDialog(null, "Passwords File Generated !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    PasswordsFrame newFrame = new PasswordsFrame(ObjectAES);
+                    this.setVisible(false);
+                    newFrame.setVisible(true);
+                }
+                else
+                {
+                    ThePassword = String.valueOf(jPasswordField1.getPassword());
+                    ObjectAES = new AlgorithmAES(ThePassword);
+                    if(ObjectAES.MD5PasswordChecker())
+                    {
+                        PasswordsFrame newFrame = new PasswordsFrame(ObjectAES);
+                        this.setVisible(false);
+                        newFrame.setVisible(true);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Wrong Password !", "Error !", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Passwords not match !", "Error !", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Enter a Password !", "Error !", JOptionPane.ERROR_MESSAGE);
+
+        }
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -100,6 +172,8 @@ public class WelcomeFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
