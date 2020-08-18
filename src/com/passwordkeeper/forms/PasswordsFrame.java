@@ -8,7 +8,11 @@ package com.passwordkeeper.forms;
 import com.passwordkeeper.classes.AlgorithmAES;
 import org.xml.sax.SAXException;
 
+import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 /**
@@ -62,6 +66,21 @@ public class PasswordsFrame extends javax.swing.JFrame {
                 jTextField1ActionPerformed(evt);
             }
         });
+
+        //Container contentPane = getContentPane();
+        jList1.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent me) {
+                showPopup(me); // showPopup() is our own user-defined method
+            }
+        }) ;
+        jPopupMenu1 = new JPopupMenu();
+        // add menu items to popup
+        jPopupMenu1.add(new JMenuItem("Add Password to Category"));
+        jPopupMenu1.add(new JMenuItem("Show Category Passwords"));
+        jPopupMenu1.add(new JMenuItem("Modify Category"));
+        jPopupMenu1.addSeparator();
+        jPopupMenu1.add(new JMenuItem("Delete Category"));
+
         jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTextField1KeyPressed(evt);
@@ -93,6 +112,12 @@ public class PasswordsFrame extends javax.swing.JFrame {
         );
 
         pack();
+
+        //Ekranın ortasında çıkması için
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int xLoc = (dim.width/2-this.getSize().width/2);
+        int yLoc = (dim.height/2)-this.getSize().height/2;
+        this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -104,10 +129,15 @@ public class PasswordsFrame extends javax.swing.JFrame {
         // Her bir yazımda listelenecek parolalar filitrelenecek
     }//GEN-LAST:event_jTextField1KeyPressed
 
+    /// Popup Mouse Event Trigger
+    void showPopup(MouseEvent me) {
+        if(me.isPopupTrigger())
+            jPopupMenu1.show(me.getComponent(), me.getX(), me.getY());
+    }
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -136,6 +166,7 @@ public class PasswordsFrame extends javax.swing.JFrame {
             public void run() {
                 try {
                     new PasswordsFrame().setVisible(true);
+
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 } catch (SAXException e) {
