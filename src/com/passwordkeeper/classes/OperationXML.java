@@ -130,7 +130,7 @@ public class OperationXML {
             if(CategoryNode.getNodeType() == Node.ELEMENT_NODE)
             {
                 Element CategoryElement = (Element) CategoryNode;
-                if(CategoryID-1 == i)
+                if(CategoryID == i)
                     return CategoryElement.getAttribute("category");
             }
         }

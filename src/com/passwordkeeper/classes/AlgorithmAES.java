@@ -22,15 +22,14 @@ import javax.xml.parsers.ParserConfigurationException;
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Debug Yapılacak Her Bir Adım Baştan Deneneck
-    // Arayüz oluşturulacak
+    // Parola formu kapatıldığında, tüm formlar kapanmayacak
+    // Parola formundaki Arama kaldırılacak butonun adı değiştirilip, parolanın kopyalanması yapılacak.
+    // Formların büyütme küçültme olayları düzenlenecek
     // Parola silme, güncelleme yapılacak !!!
     // Kategori silme, güncelleme yapılacak !!!
 
     // Ekstralar
     // Yeni oluşturmada çift parola istenecek
-
-
     public static SecretKey KeyAES = null;
     public static final String Algorithm = "AES";
     private static String EnteredPassword;
@@ -108,6 +107,9 @@ public class AlgorithmAES
         return XMLOperations.CategoryPasswordArrayXML(PasswordDocsPath, CategoryID);
     }
 
+    public String GetCategoryNameFromID(int CategoryID) throws ParserConfigurationException, SAXException, IOException {
+        return XMLOperations.CategoryReturnerFromXML(PasswordDocsPath, CategoryID);
+    }
 
     public void CopyPasswordToClipBoard() throws IOException, SAXException, ParserConfigurationException
     {

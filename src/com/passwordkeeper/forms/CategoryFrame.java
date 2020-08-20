@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -19,20 +21,27 @@ import java.io.IOException;
  *
  * @author Cargamoni
  */
-public class PasswordsFrame extends javax.swing.JFrame {
+public class CategoryFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form PasswordsFrame
      */
     AlgorithmAES FromClass;
-    public PasswordsFrame() throws ParserConfigurationException, SAXException, IOException {
+    public CategoryFrame() throws ParserConfigurationException, SAXException, IOException {
         initComponents();
     }
 
-    public PasswordsFrame(AlgorithmAES AesClass) throws ParserConfigurationException, SAXException, IOException {
+    public CategoryFrame(AlgorithmAES AesClass) throws ParserConfigurationException, SAXException, IOException {
         FromClass = AesClass;
         initComponents();
     }
+
+    /*
+    Experimental
+     */
+
+    private JRadioButtonMenuItem items[]; // holds items for colors
+    String menuItems[] = { "Add Password to Category", "Show Category Passwords","Modify Category","Delete Category" };
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -48,6 +57,8 @@ public class PasswordsFrame extends javax.swing.JFrame {
         jList1 = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
+
+        this.setTitle("Category List");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
@@ -67,19 +78,6 @@ public class PasswordsFrame extends javax.swing.JFrame {
             }
         });
 
-        //Container contentPane = getContentPane();
-        jList1.addMouseListener(new MouseAdapter() {
-            public void mouseReleased(MouseEvent me) {
-                showPopup(me); // showPopup() is our own user-defined method
-            }
-        }) ;
-        jPopupMenu1 = new JPopupMenu();
-        // add menu items to popup
-        jPopupMenu1.add(new JMenuItem("Add Password to Category"));
-        jPopupMenu1.add(new JMenuItem("Show Category Passwords"));
-        jPopupMenu1.add(new JMenuItem("Modify Category"));
-        jPopupMenu1.addSeparator();
-        jPopupMenu1.add(new JMenuItem("Delete Category"));
 
         jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -118,7 +116,80 @@ public class PasswordsFrame extends javax.swing.JFrame {
         int xLoc = (dim.width/2-this.getSize().width/2);
         int yLoc = (dim.height/2)-this.getSize().height/2;
         this.setLocation(xLoc,yLoc);
+
+    /*
+    Experimental
+     */
+        // Popuplist için event handler
+        // Butonlar için Icon bulunacak !
+        ItemHandler handler = new ItemHandler();
+        ButtonGroup bntGroup = new ButtonGroup();
+        items = new JRadioButtonMenuItem[menuItems.length];
+
+        for (int i = 0; i < items.length; i++)
+        {
+            if(i == items.length -1)
+                jPopupMenu1.addSeparator();
+            items[i] = new JRadioButtonMenuItem(menuItems[i]);
+            jPopupMenu1.add(items[i]);
+            bntGroup.add(items[i]);
+            items[i].addActionListener(handler);
+        }
+
+        jList1.addMouseListener(new MouseAdapter()
+             {
+                 public void mousePressed(MouseEvent event) { checkForTriggerEvent(event); }
+                 public void mouseReleased(MouseEvent event) { checkForTriggerEvent(event); }
+                 private void checkForTriggerEvent(MouseEvent event) {
+                     if (event.isPopupTrigger()) jPopupMenu1.show(event.getComponent(), event.getX(), event.getY());
+                 }
+             }
+        );
+
+    /*
+    Experimental Ending
+     */
+
+
     }// </editor-fold>//GEN-END:initComponents
+
+    /*
+     Experimental
+     */
+
+    // Popup menü elemanlarına tıklandığı zaman neyin yapılacağının belirleneceği bölüm !
+    private class ItemHandler implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            for (int i = 0; i < items.length; i++) {
+                if (event.getSource() == items[i]) {
+                    //Debug
+                    //JOptionPane.showMessageDialog(null, menuItems[i] + " " + String.valueOf(i), "Success", JOptionPane.INFORMATION_MESSAGE);
+                    if(i == 1)
+                    {
+                        try {
+                            if(!jList1.isSelectionEmpty())
+                            {
+                                PasswordFrame ShowPasswords = new PasswordFrame(FromClass, jList1.getSelectedIndex());
+                                ShowPasswords.setVisible(true);
+                                setVisible(false);
+                            }
+                        } catch (ParserConfigurationException e) {
+                            e.printStackTrace();
+                        } catch (SAXException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+            /*
+     Experimental
+     */
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
@@ -129,11 +200,6 @@ public class PasswordsFrame extends javax.swing.JFrame {
         // Her bir yazımda listelenecek parolalar filitrelenecek
     }//GEN-LAST:event_jTextField1KeyPressed
 
-    /// Popup Mouse Event Trigger
-    void showPopup(MouseEvent me) {
-        if(me.isPopupTrigger())
-            jPopupMenu1.show(me.getComponent(), me.getX(), me.getY());
-    }
     /**
      * @param args the command line arguments
      */
@@ -141,7 +207,7 @@ public class PasswordsFrame extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -151,13 +217,13 @@ public class PasswordsFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PasswordsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CategoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PasswordsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CategoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PasswordsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CategoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PasswordsFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CategoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -165,7 +231,7 @@ public class PasswordsFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new PasswordsFrame().setVisible(true);
+                    new CategoryFrame().setVisible(true);
 
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();

@@ -12,7 +12,6 @@ import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.IOException;
-import java.util.Scanner;
 
 /**
  *
@@ -135,7 +134,7 @@ public class WelcomeFrame extends javax.swing.JFrame {
                     ObjectAES = new AlgorithmAES(ThePassword);
                     System.out.print("New password generated.");
                     JOptionPane.showMessageDialog(null, "Passwords File Generated !", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    PasswordsFrame newFrame = new PasswordsFrame(ObjectAES);
+                    CategoryFrame newFrame = new CategoryFrame(ObjectAES);
                     this.setVisible(false);
                     newFrame.setVisible(true);
                 }
@@ -145,7 +144,7 @@ public class WelcomeFrame extends javax.swing.JFrame {
                     ObjectAES = new AlgorithmAES(ThePassword);
                     if(ObjectAES.MD5PasswordChecker())
                     {
-                        PasswordsFrame newFrame = new PasswordsFrame(ObjectAES);
+                        CategoryFrame newFrame = new CategoryFrame(ObjectAES);
                         this.setVisible(false);
                         newFrame.setVisible(true);
                     }
