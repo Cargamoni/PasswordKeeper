@@ -5,6 +5,14 @@
  */
 package com.passwordkeeper.forms;
 
+import com.passwordkeeper.classes.AlgorithmAES;
+import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.io.IOException;
+
 /**
  *
  * @author Cargamoni
@@ -14,7 +22,14 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
     /**
      * Creates new form CreateCategoryFrame
      */
+    AlgorithmAES FromClass;
     public CreateCategoryFrame() {
+        initComponents();
+    }
+
+    public CreateCategoryFrame(AlgorithmAES AesClass)
+    {
+        FromClass = AesClass;
         initComponents();
     }
 
@@ -31,13 +46,26 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jToggleButton1 = new javax.swing.JToggleButton();
 
+        setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Category Name");
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setText("");
 
         jToggleButton1.setText("Enter");
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    jToggleButton1(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                }
+            }});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -66,7 +94,27 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         );
 
         pack();
+
+        //Ekranın ortasında çıkması için
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int xLoc = (dim.width/2-this.getSize().width/2);
+        int yLoc = (dim.height/2)-this.getSize().height/2;
+        this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jToggleButton1(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException {
+        if(jTextField1.getText().length() != 0)
+        {
+            FromClass.NewCategoryAdder(jTextField1.getText());
+            JOptionPane.showMessageDialog(null, "Category Created", "Success", JOptionPane.INFORMATION_MESSAGE);
+            setVisible(false);
+            CategoryFrame newFrame = new CategoryFrame(FromClass);
+            newFrame.setVisible(true);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Enter a Category Name !", "Error", JOptionPane.ERROR_MESSAGE);
+
+    }
 
     /**
      * @param args the command line arguments

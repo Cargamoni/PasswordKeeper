@@ -147,7 +147,7 @@ public class OperationXML {
         String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
 
         NodeList nList = GetRoot.getElementsByTagName("userPass");
-        System.out.println("----------------------------");
+        //System.out.println("----------------------------");
 
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
@@ -277,7 +277,7 @@ public class OperationXML {
 
                             // Debug
                             //System.out.print("Pass value : ");
-                            if(count == TypeID-1)
+                            if(count == TypeID)
                             {
                                 byte[] cipher = car.getTextContent().getBytes();
                                 return cipher;
@@ -294,12 +294,12 @@ public class OperationXML {
     }
 
     /// XML Dosyası İçerisine Category Ekleme İşlemini Yapar.
-    public void AddCategoryXML(String Path)
+    public void AddCategoryXML(String Path, String CategoryName)
     {
         try
         {
-            System.out.print("Set a Category Name : ");
-            Scanner CategoryChooser = new Scanner(System.in);
+            //System.out.print("Set a Category Name : ");
+            //Scanner CategoryChooser = new Scanner(System.in);
             DocumentBuilderFactory Factory = DocumentBuilderFactory.newInstance();
             Document ReadXMLDocument = Factory.newDocumentBuilder().parse(Path);
 
@@ -309,7 +309,7 @@ public class OperationXML {
             GetRoot.appendChild(CategoryElement);
 
             Attr CategoryAttribute = ReadXMLDocument.createAttribute("category");
-            CategoryAttribute.setValue(CategoryChooser.nextLine());
+            CategoryAttribute.setValue(CategoryName);
             CategoryElement.setAttributeNode(CategoryAttribute);
 
             TransformerFactory TFacktory = TransformerFactory.newInstance();
@@ -326,16 +326,18 @@ public class OperationXML {
     }
 
     /// XML Dosyası içerisine Parola ekler.
-    public void AddPasswordToCategoryXML(String Path, String Category, String ThePassword)
+    public void AddPasswordToCategoryXML(String Path, int CategoryID, String ThePassword, String PasswordName, String NewPassword)
     {
         try
         {
             ObjectAES = new AlgorithmAES(ThePassword);
 
-            System.out.print("Set a Password Name : ");
-            Scanner PasswordChooser = new Scanner(System.in);
+            //System.out.print("Set a Password Name : ");
+            //Scanner PasswordChooser = new Scanner(System.in);
             DocumentBuilderFactory Factory = DocumentBuilderFactory.newInstance();
             Document ReadXMLDocument = Factory.newDocumentBuilder().parse(Path);
+
+            String Category = CategoryReturnerFromXML(Path, CategoryID);
 
             // Root Elementi
             Element GetRoot = ReadXMLDocument.getDocumentElement();
@@ -356,9 +358,9 @@ public class OperationXML {
             CategoryElement.appendChild(PasswordElement);
 
             Attr CategoryAttribute = ReadXMLDocument.createAttribute("type");
-            CategoryAttribute.setValue(PasswordChooser.nextLine());
-            System.out.print("Enter a Password : ");
-            PasswordElement.appendChild(ReadXMLDocument.createTextNode(ObjectAES.Encryption(PasswordChooser.nextLine())));
+            CategoryAttribute.setValue(PasswordName);
+            //System.out.print("Enter a Password : ");
+            PasswordElement.appendChild(ReadXMLDocument.createTextNode(ObjectAES.Encryption(NewPassword)));
             PasswordElement.setAttributeNode(CategoryAttribute);
 
             TransformerFactory TFacktory = TransformerFactory.newInstance();

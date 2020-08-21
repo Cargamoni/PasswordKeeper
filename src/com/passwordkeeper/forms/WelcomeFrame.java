@@ -44,7 +44,7 @@ public class WelcomeFrame extends javax.swing.JFrame {
 
         this.setTitle("PasswordKeeper");
 
-
+        setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Enter Your Password");

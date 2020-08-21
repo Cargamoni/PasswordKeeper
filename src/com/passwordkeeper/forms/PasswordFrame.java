@@ -61,7 +61,9 @@ public class PasswordFrame extends JFrame {
 
         this.setTitle(FromClass.GetCategoryNameFromID(CategoryNum) + " Category Password List");
 
+        setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         jList1.setModel(new AbstractListModel<String>() {
             String[] strings = FromClass.CategoryPasswordsReturner(CategoryNum);
             public int getSize() { return strings.length; }
@@ -81,7 +83,6 @@ public class PasswordFrame extends JFrame {
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 }
-
             }});
 
         GroupLayout layout = new GroupLayout(getContentPane());
@@ -160,7 +161,22 @@ public class PasswordFrame extends JFrame {
             for (int i = 0; i < items.length; i++) {
                 if (event.getSource() == items[i]) {
                     //getContentPane().setBackground(colorValues[i]);
-                    JOptionPane.showMessageDialog(null, menuItems[i] + " " + String.valueOf(i), "Success", JOptionPane.INFORMATION_MESSAGE);
+                    try {
+                        if(i == 0)
+                        {
+                            if(!jList1.isSelectionEmpty())
+                            {
+                                FromClass.CopyPasswordToClipBoard(CategoryNum, jList1.getSelectedIndex());
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (SAXException e) {
+                        e.printStackTrace();
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    }
+                    JOptionPane.showMessageDialog(null, jList1.getSelectedValue() + " Password Copied to Clipboard, use Ctrl+V for paste", "Success", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
             }

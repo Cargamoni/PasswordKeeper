@@ -56,11 +56,12 @@ public class CategoryFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
 
         this.setTitle("Category List");
 
+        setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = FromClass.CategoryListReturner();
             public int getSize() { return strings.length; }
@@ -69,21 +70,18 @@ public class CategoryFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setText("Add a Category");
-
-        jTextField1.setEditable(false);
-        jTextField1.setText("Search");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
-
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField1KeyPressed(evt);
-            }
-        });
+                try {
+                    jButton1ActionPerformed(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                }
+            }});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -93,8 +91,7 @@ public class CategoryFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(jTextField1))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -103,7 +100,6 @@ public class CategoryFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -137,13 +133,13 @@ public class CategoryFrame extends javax.swing.JFrame {
         }
 
         jList1.addMouseListener(new MouseAdapter()
-             {
-                 public void mousePressed(MouseEvent event) { checkForTriggerEvent(event); }
-                 public void mouseReleased(MouseEvent event) { checkForTriggerEvent(event); }
-                 private void checkForTriggerEvent(MouseEvent event) {
-                     if (event.isPopupTrigger()) jPopupMenu1.show(event.getComponent(), event.getX(), event.getY());
-                 }
+         {
+             public void mousePressed(MouseEvent event) { checkForTriggerEvent(event); }
+             public void mouseReleased(MouseEvent event) { checkForTriggerEvent(event); }
+             private void checkForTriggerEvent(MouseEvent event) {
+                 if (event.isPopupTrigger()) jPopupMenu1.show(event.getComponent(), event.getX(), event.getY());
              }
+         }
         );
 
     /*
@@ -164,41 +160,49 @@ public class CategoryFrame extends javax.swing.JFrame {
                 if (event.getSource() == items[i]) {
                     //Debug
                     //JOptionPane.showMessageDialog(null, menuItems[i] + " " + String.valueOf(i), "Success", JOptionPane.INFORMATION_MESSAGE);
-                    if(i == 1)
-                    {
                         try {
-                            if(!jList1.isSelectionEmpty())
+                            if ( i == 0)
                             {
-                                PasswordFrame ShowPasswords = new PasswordFrame(FromClass, jList1.getSelectedIndex());
-                                ShowPasswords.setVisible(true);
-                                setVisible(false);
+                                if(!jList1.isSelectionEmpty())
+                                {
+                                    PasswordAddModify AddPassword = new PasswordAddModify(FromClass, jList1.getSelectedIndex());
+                                    AddPassword.setVisible(true);
+                                    setVisible(false);
+                                }
                             }
-                        } catch (ParserConfigurationException e) {
-                            e.printStackTrace();
-                        } catch (SAXException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                            else if(i == 1)
+                            {
+                                if(!jList1.isSelectionEmpty())
+                                {
+                                    if(FromClass.CategoryPasswordsReturner(jList1.getSelectedIndex()).length != 0)
+                                    {
+                                        PasswordFrame ShowPasswords = new PasswordFrame(FromClass, jList1.getSelectedIndex());
+                                        ShowPasswords.setVisible(true);
+                                        setVisible(false);
+                                    }
+                                    else
+                                    {
+                                        JOptionPane.showMessageDialog(null, "There is no Password in this Category !", "Error", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                }
+                            }
+                        } catch (ParserConfigurationException e) { e.printStackTrace(); } catch (SAXException e) { e.printStackTrace(); } catch (IOException e) { e.printStackTrace(); }
+
                     return;
                 }
             }
         }
     }
 
-            /*
+    /*
      Experimental
      */
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
-        // TODO add your handling code here:
-        // Her bir yazımda listelenecek parolalar filitrelenecek
-    }//GEN-LAST:event_jTextField1KeyPressed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException {
+        CreateCategoryFrame CreateCategoryButton = new CreateCategoryFrame(FromClass);
+        setVisible(false);
+        CreateCategoryButton.setVisible(true);
+    }
 
     /**
      * @param args the command line arguments
@@ -249,6 +253,5 @@ public class CategoryFrame extends javax.swing.JFrame {
     private javax.swing.JList<String> jList1;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

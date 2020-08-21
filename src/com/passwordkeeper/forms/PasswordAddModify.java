@@ -5,6 +5,14 @@
  */
 package com.passwordkeeper.forms;
 
+import com.passwordkeeper.classes.AlgorithmAES;
+import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.io.IOException;
+
 /**
  *
  * @author Cargamoni
@@ -14,7 +22,16 @@ public class PasswordAddModify extends javax.swing.JFrame {
     /**
      * Creates new form PasswordAddModify
      */
+    AlgorithmAES FromClass;
+    int CategoryNum;
     public PasswordAddModify() {
+        initComponents();
+    }
+
+    public PasswordAddModify(AlgorithmAES AesClass , int CategoryID)
+    {
+        FromClass = AesClass;
+        CategoryNum = CategoryID;
         initComponents();
     }
 
@@ -35,13 +52,26 @@ public class PasswordAddModify extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
 
+        setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Add Password");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try {
+                    jButton1ActionPerformed(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                }
+            }});
 
         jLabel1.setText("Password Name");
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setText("");
 
         jLabel2.setText("Enter Password");
 
@@ -87,7 +117,43 @@ public class PasswordAddModify extends javax.swing.JFrame {
         );
 
         pack();
+
+        //Ekranın ortasında çıkması için
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int xLoc = (dim.width/2-this.getSize().width/2);
+        int yLoc = (dim.height/2)-this.getSize().height/2;
+        this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException {
+        /// Password koruması yapılacak
+        if(jTextField1.getText().length() != 0)
+        {
+            if(String.valueOf(jPasswordField2.getPassword()).length() != 0 && String.valueOf(jPasswordField3.getPassword()).length() != 0)
+            {
+                if(String.valueOf(jPasswordField3.getPassword()).equals(String.valueOf(jPasswordField2.getPassword())))
+                {
+                    FromClass.NewPasswordAdder(CategoryNum, jTextField1.getText(), String.valueOf(jPasswordField2.getPassword()));
+                    JOptionPane.showMessageDialog(null, "Password Added !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    CategoryFrame GoBackToCategory = new CategoryFrame(FromClass);
+                    setVisible(false);
+                    GoBackToCategory.setVisible(true);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Passwords Not Match !", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Enter a Passwords !", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Enter a Password Name !", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * @param args the command line arguments
