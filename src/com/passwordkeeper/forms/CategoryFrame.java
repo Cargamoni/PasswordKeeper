@@ -43,6 +43,15 @@ public class CategoryFrame extends javax.swing.JFrame {
     private JRadioButtonMenuItem items[]; // holds items for colors
     String menuItems[] = { "Add Password to Category", "Show Category Passwords","Modify Category","Delete Category" };
 
+    public DefaultListModel CategoryModel() throws IOException, SAXException, ParserConfigurationException
+    {
+        DefaultListModel model = new DefaultListModel();
+        String[] strings = FromClass.CategoryListReturner();
+        for(int i = 0; i < strings.length; i++)
+            model.addElement(strings[i]);
+        return model;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -62,11 +71,12 @@ public class CategoryFrame extends javax.swing.JFrame {
         setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = FromClass.CategoryListReturner();
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        jList1.setModel(CategoryModel());
+//        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+//            String[] strings = FromClass.CategoryListReturner();
+//            public int getSize() { return strings.length; }
+//            public String getElementAt(int i) { return strings[i]; }
+//        });
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setText("Add a Category");
@@ -183,6 +193,23 @@ public class CategoryFrame extends javax.swing.JFrame {
                                     else
                                     {
                                         JOptionPane.showMessageDialog(null, "There is no Password in this Category !", "Error", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                }
+                            }
+                            else if(i == 3)
+                            {
+                                if(!jList1.isSelectionEmpty())
+                                {
+                                    //JDialog areYouSure = new JDialog();
+                                    String[] options = {"Accept", "Decline"};
+                                    int x = JOptionPane.showOptionDialog(null, "When category deleted, all category passwords are going to deleted ! \n\n Do you want to proceed ?",
+                                            "Category Remove",
+                                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                                    if(x == 0)
+                                    {
+                                        FromClass.DeleteThisCategory(jList1.getSelectedIndex());
+                                        JOptionPane.showMessageDialog(null, "Category Removed !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                        jList1.setModel(CategoryModel());
                                     }
                                 }
                             }

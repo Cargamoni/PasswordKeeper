@@ -11,10 +11,7 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 
 /**
@@ -36,6 +33,15 @@ public class PasswordFrame extends JFrame {
         FromClass = AesClass;
         CategoryNum = CategoryID;
         initComponents();
+    }
+
+    public DefaultListModel PasswordModel() throws IOException, SAXException, ParserConfigurationException
+    {
+        DefaultListModel model = new DefaultListModel();
+        String[] strings = FromClass.CategoryPasswordsReturner(CategoryNum);
+        for(int i = 0; i < strings.length; i++)
+            model.addElement(strings[i]);
+        return model;
     }
 
     /*
@@ -62,13 +68,34 @@ public class PasswordFrame extends JFrame {
         this.setTitle(FromClass.GetCategoryNameFromID(CategoryNum) + " Category Password List");
 
         setResizable(false);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        jList1.setModel(new AbstractListModel<String>() {
-            String[] strings = FromClass.CategoryPasswordsReturner(CategoryNum);
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        // Kapatıldığında bir önceki frame'e dönmesini sağlar.
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                JFrame frame = (JFrame)e.getSource();
+                frame.setVisible(false);
+                CategoryFrame newFrame = null;
+                try {
+                    newFrame = new CategoryFrame(FromClass);
+                } catch (ParserConfigurationException parserConfigurationException) {
+                    parserConfigurationException.printStackTrace();
+                } catch (SAXException saxException) {
+                    saxException.printStackTrace();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                newFrame.setVisible(true);
+            }
         });
+
+        jList1.setModel(PasswordModel());
+//        jList1.setModel(new AbstractListModel<String>() {
+//            String[] strings = FromClass.CategoryPasswordsReturner(CategoryNum);
+//            public int getSize() { return strings.length; }
+//            public String getElementAt(int i) { return strings[i]; }
+//        });
         jScrollPane1.setViewportView(jList1);
 
         jButton1.setText("Go Back");
@@ -167,6 +194,16 @@ public class PasswordFrame extends JFrame {
                             if(!jList1.isSelectionEmpty())
                             {
                                 FromClass.CopyPasswordToClipBoard(CategoryNum, jList1.getSelectedIndex());
+                                JOptionPane.showMessageDialog(null, jList1.getSelectedValue() + " Password Copied to Clipboard, use Ctrl+V for paste", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }
+                        else if (i == 2)
+                        {
+                            if(!jList1.isSelectionEmpty())
+                            {
+                                FromClass.DeleteThisPassword(CategoryNum, jList1.getSelectedIndex());
+                                JOptionPane.showMessageDialog(null, jList1.getSelectedValue() + " Password Deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                jList1.setModel(PasswordModel());
                             }
                         }
                     } catch (IOException e) {
@@ -176,7 +213,6 @@ public class PasswordFrame extends JFrame {
                     } catch (ParserConfigurationException e) {
                         e.printStackTrace();
                     }
-                    JOptionPane.showMessageDialog(null, jList1.getSelectedValue() + " Password Copied to Clipboard, use Ctrl+V for paste", "Success", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
             }

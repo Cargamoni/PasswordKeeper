@@ -249,7 +249,6 @@ public class OperationXML {
         String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
 
         NodeList nList = GetRoot.getElementsByTagName("userPass");
-        System.out.println("----------------------------");
 
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
@@ -373,6 +372,90 @@ public class OperationXML {
         } catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
             System.out.println("Password Not Added.");
+        }
+    }
+
+    /// XML Dosyası içerisine Parola siler.
+    public void DeletePasswordFromXML(String Path, int CategoryID, int PasswordID)
+    {
+        try
+        {
+            DocumentBuilderFactory Factory = DocumentBuilderFactory.newInstance();
+            Document ReadXMLDocument = Factory.newDocumentBuilder().parse(Path);
+
+            Element GetRoot = ReadXMLDocument.getDocumentElement();
+            String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
+
+            NodeList nList = GetRoot.getElementsByTagName("userPass");
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    if(eElement.getAttribute("category").equals(CategoryName))
+                    {
+                        NodeList carNameList = eElement.getElementsByTagName("cipherText");
+                        for (int count = 0; count < carNameList.getLength(); count++) {
+                            Node node1 = carNameList.item(count);
+                            if (node1.getNodeType() == node1.ELEMENT_NODE) {
+                                Element car = (Element) node1;
+                                if(count == PasswordID)
+                                {
+                                    car.getParentNode().removeChild(car);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            TransformerFactory TFacktory = TransformerFactory.newInstance();
+            Transformer OptimusPrime = TFacktory.newTransformer();
+            DOMSource Source = new DOMSource(ReadXMLDocument);
+            StreamResult Result = new StreamResult(new File(Path));
+            OptimusPrime.transform(Source, Result);
+
+            System.out.println("Password Removed.");
+        } catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
+            System.out.println("Password Not Removed.");
+        }
+    }
+
+    /// XML Dosyası içinden Categoriyi siler
+    public void DeleteCategoryFromXML(String Path, int CategoryID)
+    {
+        try
+        {
+            DocumentBuilderFactory Factory = DocumentBuilderFactory.newInstance();
+            Document ReadXMLDocument = Factory.newDocumentBuilder().parse(Path);
+
+            Element GetRoot = ReadXMLDocument.getDocumentElement();
+            String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
+
+            NodeList nList = GetRoot.getElementsByTagName("userPass");
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    if(eElement.getAttribute("category").equals(CategoryName))
+                    {
+                        eElement.getParentNode().removeChild(nNode);
+                    }
+                }
+            }
+
+            TransformerFactory TFacktory = TransformerFactory.newInstance();
+            Transformer OptimusPrime = TFacktory.newTransformer();
+            DOMSource Source = new DOMSource(ReadXMLDocument);
+            StreamResult Result = new StreamResult(new File(Path));
+            OptimusPrime.transform(Source, Result);
+
+            System.out.println("Password Removed.");
+        } catch (IOException | SAXException | ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
+            System.out.println("Password Not Removed.");
         }
     }
 

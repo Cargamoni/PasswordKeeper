@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 /**
@@ -47,7 +49,27 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         jToggleButton1 = new javax.swing.JToggleButton();
 
         setResizable(false);
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        //Kapatıldığında bir önceki forma dönmeyi sağlıyor.
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                JFrame frame = (JFrame)e.getSource();
+                frame.setVisible(false);
+                CategoryFrame newFrame = null;
+                try {
+                    newFrame = new CategoryFrame(FromClass);
+                } catch (ParserConfigurationException parserConfigurationException) {
+                    parserConfigurationException.printStackTrace();
+                } catch (SAXException saxException) {
+                    saxException.printStackTrace();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                newFrame.setVisible(true);
+            }
+        });
 
         jLabel1.setText("Category Name");
 

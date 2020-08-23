@@ -13,7 +13,6 @@ import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
-import java.util.Scanner;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,8 +21,8 @@ import javax.xml.parsers.ParserConfigurationException;
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Parola silme, güncelleme yapılacak
-    // Kategori silme, güncelleme yapılacak
+    // Parola güncelleme yapılacak
+    // Kategori güncelleme yapılacak
     public static SecretKey KeyAES = null;
     public static final String Algorithm = "AES";
     private static String EnteredPassword;
@@ -51,36 +50,22 @@ public class AlgorithmAES
     public void NewCategoryAdder(String CategoryName)
     {
         XMLOperations.AddCategoryXML(PasswordDocsPath, CategoryName);
-//        System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
-//        Scanner Motion = new Scanner(System.in);
-//        char MotionChar = Motion.nextLine().toCharArray()[0];
-//        if(MotionChar == '1')
-//            NewCategoryAdder();
-//        else if (MotionChar == '2')
-//            NewPasswordAdder();
-//        else if (MotionChar == '3')
-//            return;
-//        else
-//            System.out.println("Wrong Input");
     }
 
     /// XML içerisine kategoriye ait yeni parola ekleme işlemini gerçekleştirir.
     public void NewPasswordAdder(int CategoryID, String PasswordName, String NewPassword)
     {
-//        Scanner Motion = new Scanner(System.in);
-//        System.out.print("Which Category : ");
-//        String CategoryName = Motion.nextLine();
         XMLOperations.AddPasswordToCategoryXML(PasswordDocsPath, CategoryID, EnteredPassword, PasswordName, NewPassword);
-//        System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
-//        char MotionChar = Motion.nextLine().toCharArray()[0];
-//        if(MotionChar == '1')
-//            NewCategoryAdder();
-//        else if (MotionChar == '2')
-//            NewPasswordAdder();
-//        else if (MotionChar == '3')
-//            return;
-//        else
-//            System.out.println("Wrong Input");
+    }
+
+    public void DeleteThisPassword(int CategoryID, int PasswordID)
+    {
+        XMLOperations.DeletePasswordFromXML(PasswordDocsPath, CategoryID, PasswordID);
+    }
+
+    public void DeleteThisCategory(int CategoryID)
+    {
+        XMLOperations.DeleteCategoryFromXML(PasswordDocsPath, CategoryID);
     }
 
     /// XML içerisinden Kategorileri listeler.

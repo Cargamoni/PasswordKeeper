@@ -11,6 +11,8 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 /**
@@ -53,7 +55,27 @@ public class PasswordAddModify extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
 
         setResizable(false);
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        // Kapatıldığında bir önceki frame'e dönmesini sağlar.
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                JFrame frame = (JFrame)e.getSource();
+                frame.setVisible(false);
+                PasswordFrame newFrame = null;
+                try {
+                    newFrame = new PasswordFrame(FromClass, CategoryNum);
+                } catch (ParserConfigurationException parserConfigurationException) {
+                    parserConfigurationException.printStackTrace();
+                } catch (SAXException saxException) {
+                    saxException.printStackTrace();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                newFrame.setVisible(true);
+            }
+        });
 
         jButton1.setText("Add Password");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
