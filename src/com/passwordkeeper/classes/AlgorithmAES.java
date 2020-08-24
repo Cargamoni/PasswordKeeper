@@ -17,11 +17,11 @@ import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Kategori güncelleme yapılacak
 
     //Ekstralar
     //Parola Yoksa geri dönme yapılabilir.
@@ -33,12 +33,10 @@ public class AlgorithmAES
     public Boolean CategoryChecker;
     OperationXML XMLOperations;
 
-
     public AlgorithmAES()
     {
         XMLOperations = new OperationXML();
     }
-
     public AlgorithmAES(String Password) throws ParserConfigurationException, SAXException, IOException
     {
         XMLOperations = new OperationXML();
@@ -75,7 +73,14 @@ public class AlgorithmAES
         return XMLOperations.CategoryPasswordModifyValuesXML(PasswordDocsPath, CategoryID, PassowrdID);
     }
 
+    public String CategoryNameReturner(int CategoryID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryReturnerFromXML(PasswordDocsPath, CategoryID);
+    }
 
+    public void CategoryModifier(int CategoryID, String CategoryName) throws SAXException, TransformerException, ParserConfigurationException, IOException {
+        XMLOperations.CategoryModifyFromXML(PasswordDocsPath, CategoryID, CategoryName);
+    }
     /// XML içerisinden Kategorileri listeler.
     public void CategoryLister() throws ParserConfigurationException, SAXException, IOException
     {

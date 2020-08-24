@@ -6,10 +6,12 @@
 package com.passwordkeeper.forms;
 
 import com.passwordkeeper.classes.AlgorithmAES;
+import jdk.jfr.Category;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -37,10 +39,12 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         initComponents();
     }
 
-    public CreateCategoryFrame(AlgorithmAES AesClass, int CategoryID)
-    {
+    public CreateCategoryFrame(AlgorithmAES AesClass, int CategoryID) throws IOException, SAXException, ParserConfigurationException {
         FromClass = AesClass;
         CategoryNum = CategoryID;
+        initComponents();
+        if(CategoryNum != -1)
+            jTextField1.setText(FromClass.CategoryNameReturner(CategoryNum));
     }
 
     /**
@@ -94,6 +98,8 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
                     e.printStackTrace();
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
+                } catch (TransformerException e) {
+                    e.printStackTrace();
                 }
             }});
 
@@ -132,8 +138,7 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToggleButton1(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException
-    {
+    private void jToggleButton1(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException, TransformerException {
         if(CategoryNum == -1)
         {
             if(jTextField1.getText().length() != 0)
@@ -149,7 +154,14 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         }
         else
         {
-
+            if(jTextField1.getText().length() != 0)
+            {
+                /// Modify Mode
+                FromClass.CategoryModifier(CategoryNum ,jTextField1.getText());
+                setVisible(false);
+                CategoryFrame newFrame = new CategoryFrame(FromClass);
+                newFrame.setVisible(true);
+            }
         }
     }
 

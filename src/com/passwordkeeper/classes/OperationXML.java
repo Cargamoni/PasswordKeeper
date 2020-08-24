@@ -138,6 +138,51 @@ public class OperationXML {
 
     }
 
+    public void CategoryModifyFromXML(String Path, int CategoryID, String NewCategoryName) throws IOException, SAXException, ParserConfigurationException, TransformerException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+
+        //Node cars = ReadXMLDocument.getFirstChild();
+        Node supercar = ReadXMLDocument.getElementsByTagName("userPass").item(CategoryID);
+
+        // update supercar attribute
+        NamedNodeMap attr = supercar.getAttributes();
+        Node nodeAttr = attr.getNamedItem("category");
+        nodeAttr.setTextContent(NewCategoryName);
+
+//        // loop the supercar child node
+//        NodeList list = supercar.getChildNodes();
+//
+//        for (int temp = 0; temp < list.getLength(); temp++) {
+//            Node node = list.item(temp);
+//            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                Element eElement = (Element) node;
+//                if ("carname".equals(eElement.getNodeName())) {
+//                    if("Ferrari 101".equals(eElement.getTextContent())) {
+//                        eElement.setTextContent("Lamborigini 001");
+//                    }
+//                    if("Ferrari 202".equals(eElement.getTextContent()))
+//                        eElement.setTextContent("Lamborigini 002");
+//                }
+//            }
+//        }
+//        NodeList childNodes = cars.getChildNodes();
+//
+//        for(int count = 0; count < childNodes.getLength(); count++) {
+//            Node node = childNodes.item(count);
+//
+//            if("luxurycars".equals(node.getNodeName()))
+//                cars.removeChild(node);
+//        }
+
+        TransformerFactory TFacktory = TransformerFactory.newInstance();
+        Transformer OptimusPrime = TFacktory.newTransformer();
+        DOMSource Source = new DOMSource(ReadXMLDocument);
+        StreamResult Result = new StreamResult(new File(Path));
+        OptimusPrime.transform(Source, Result);
+
+    }
+
     /// XML içerisinden seçilen kategoriye ait olan parola isimlerini getirir.
     public void CategoryPasswordListerXML(String Path, int CategoryID) throws IOException, SAXException, ParserConfigurationException
     {
@@ -239,7 +284,7 @@ public class OperationXML {
         return PasswordList;
     }
 
-    /// XML içerisinden seçilen kategoriye ait olan parola isimlerini Dizi olarak döndürür.
+    /// XML içerisinden seçilen kategoriye ait olan Parola Adı Ve Parolanın Şifrelenmiş Halini Dizi olarak döndürür.
     public String[] CategoryPasswordModifyValuesXML(String Path, int CategoryID, int PasswordID) throws IOException, SAXException, ParserConfigurationException
     {
         Document ReadXMLDocument = ReadFromXML(Path);

@@ -196,6 +196,12 @@ public class CategoryFrame extends javax.swing.JFrame {
                                     }
                                 }
                             }
+                            else if (i == 2)
+                            {
+                                CreateCategoryFrame ModifyFrame = new CreateCategoryFrame(FromClass, jList1.getSelectedIndex());
+                                setVisible(false);
+                                ModifyFrame.setVisible(true);
+                            }
                             else if(i == 3)
                             {
                                 if(!jList1.isSelectionEmpty())
