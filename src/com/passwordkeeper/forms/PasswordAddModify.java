@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.Base64;
 
 /**
  *
@@ -26,7 +27,10 @@ public class PasswordAddModify extends javax.swing.JFrame {
      */
     AlgorithmAES FromClass;
     int CategoryNum;
-    public PasswordAddModify() {
+    int PasswordNum = -1;
+    String[] PasswordStrings;
+    public PasswordAddModify()
+    {
         initComponents();
     }
 
@@ -35,6 +39,22 @@ public class PasswordAddModify extends javax.swing.JFrame {
         FromClass = AesClass;
         CategoryNum = CategoryID;
         initComponents();
+    }
+
+    public PasswordAddModify(AlgorithmAES AesClass , int CategoryID, int PasswordID) throws IOException, SAXException, ParserConfigurationException {
+        FromClass = AesClass;
+        CategoryNum = CategoryID;
+        PasswordNum = PasswordID;
+        initComponents();
+        PasswordStrings = FromClass.ModifyThisPasswordStrings(CategoryNum,PasswordNum);
+        if(PasswordStrings.length > 0)
+        {
+            //String Pass = String.valueOf(Base64.getDecoder().decode(PasswordStrings[1]));
+            String Pass = String.valueOf(PasswordStrings[1]);
+            jTextField1.setText(PasswordStrings[0]);
+            jPasswordField2.setText(Pass);
+            jPasswordField3.setText(Pass);
+        }
     }
 
     /**
@@ -92,11 +112,8 @@ public class PasswordAddModify extends javax.swing.JFrame {
             }});
 
         jLabel1.setText("Password Name");
-
         jTextField1.setText("");
-
         jLabel2.setText("Enter Password");
-
         jLabel3.setText("Re-Enter Password");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -147,33 +164,67 @@ public class PasswordAddModify extends javax.swing.JFrame {
         this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException {
-        /// Password koruması yapılacak
-        if(jTextField1.getText().length() != 0)
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException
+    {
+        if(PasswordNum == -1)
         {
-            if(String.valueOf(jPasswordField2.getPassword()).length() != 0 && String.valueOf(jPasswordField3.getPassword()).length() != 0)
+            /// Password koruması yapılacak
+            if(jTextField1.getText().length() != 0)
             {
-                if(String.valueOf(jPasswordField3.getPassword()).equals(String.valueOf(jPasswordField2.getPassword())))
+                if(String.valueOf(jPasswordField2.getPassword()).length() != 0 && String.valueOf(jPasswordField3.getPassword()).length() != 0)
                 {
-                    FromClass.NewPasswordAdder(CategoryNum, jTextField1.getText(), String.valueOf(jPasswordField2.getPassword()));
-                    JOptionPane.showMessageDialog(null, "Password Added !", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    CategoryFrame GoBackToCategory = new CategoryFrame(FromClass);
-                    setVisible(false);
-                    GoBackToCategory.setVisible(true);
+                    if(String.valueOf(jPasswordField3.getPassword()).equals(String.valueOf(jPasswordField2.getPassword())))
+                    {
+                        FromClass.NewPasswordAdder(CategoryNum, jTextField1.getText(), String.valueOf(jPasswordField2.getPassword()));
+                        JOptionPane.showMessageDialog(null, "Password Added !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        CategoryFrame GoBackToCategory = new CategoryFrame(FromClass);
+                        setVisible(false);
+                        GoBackToCategory.setVisible(true);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Passwords Not Match !", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 else
                 {
-                    JOptionPane.showMessageDialog(null, "Passwords Not Match !", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Enter a Passwords !", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Enter a Passwords !", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Enter a Password Name !", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
         else
         {
-            JOptionPane.showMessageDialog(null, "Enter a Password Name !", "Error", JOptionPane.ERROR_MESSAGE);
+            if(jTextField1.getText().length() != 0)
+            {
+                if(String.valueOf(jPasswordField2.getPassword()).length() != 0 && String.valueOf(jPasswordField3.getPassword()).length() != 0)
+                {
+                    if(String.valueOf(jPasswordField3.getPassword()).equals(String.valueOf(jPasswordField2.getPassword())))
+                    {
+                        FromClass.DeleteThisPassword(CategoryNum, PasswordNum);
+                        FromClass.NewPasswordAdder(CategoryNum, jTextField1.getText(), String.valueOf(jPasswordField2.getPassword()));
+                        JOptionPane.showMessageDialog(null, "Password Added !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        CategoryFrame GoBackToCategory = new CategoryFrame(FromClass);
+                        setVisible(false);
+                        GoBackToCategory.setVisible(true);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Passwords Not Match !", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Enter a Passwords !", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "Enter a Password Name !", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

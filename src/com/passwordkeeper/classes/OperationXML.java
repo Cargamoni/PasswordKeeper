@@ -193,9 +193,7 @@ public class OperationXML {
         Element GetRoot = ReadXMLDocument.getDocumentElement();
 
         String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
-
         List<String> CategoryPasswordList = new ArrayList<String>();
-
         NodeList nList = GetRoot.getElementsByTagName("userPass");
 
         for (int temp = 0; temp < nList.getLength(); temp++)
@@ -229,6 +227,47 @@ public class OperationXML {
                             //System.out.print(String.valueOf(count+1) + ". Pass : ");
                             //System.out.println(car.getAttribute("type"));
                             CategoryPasswordList.add(car.getAttribute("type"));
+                        }
+                    }
+                }
+            }
+        }
+
+        String[] PasswordList = new String[CategoryPasswordList.size()];
+        for(int i = 0; i< PasswordList.length; i++)
+            PasswordList[i] = CategoryPasswordList.get(i);
+        return PasswordList;
+    }
+
+    /// XML içerisinden seçilen kategoriye ait olan parola isimlerini Dizi olarak döndürür.
+    public String[] CategoryPasswordModifyValuesXML(String Path, int CategoryID, int PasswordID) throws IOException, SAXException, ParserConfigurationException
+    {
+        Document ReadXMLDocument = ReadFromXML(Path);
+        Element GetRoot = ReadXMLDocument.getDocumentElement();
+
+        String CategoryName = CategoryReturnerFromXML(Path, CategoryID);
+        List<String> CategoryPasswordList = new ArrayList<String>();
+        NodeList nList = GetRoot.getElementsByTagName("userPass");
+
+        for (int temp = 0; temp < nList.getLength(); temp++)
+        {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                if(eElement.getAttribute("category").equals(CategoryName))
+                {
+                    NodeList carNameList = eElement.getElementsByTagName("cipherText");
+                    for (int count = 0; count < carNameList.getLength(); count++)
+                    {
+                        if (count == PasswordID)
+                        {
+                            Node node1 = carNameList.item(count);
+                            if (node1.getNodeType() == node1.ELEMENT_NODE)
+                            {
+                                Element car = (Element) node1;
+                                CategoryPasswordList.add(car.getAttribute("type"));
+                                CategoryPasswordList.add(car.getTextContent());
+                            }
                         }
                     }
                 }

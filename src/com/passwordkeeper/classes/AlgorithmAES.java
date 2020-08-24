@@ -21,8 +21,10 @@ import javax.xml.parsers.ParserConfigurationException;
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Parola güncelleme yapılacak
     // Kategori güncelleme yapılacak
+
+    //Ekstralar
+    //Parola Yoksa geri dönme yapılabilir.
     public static SecretKey KeyAES = null;
     public static final String Algorithm = "AES";
     private static String EnteredPassword;
@@ -68,6 +70,12 @@ public class AlgorithmAES
         XMLOperations.DeleteCategoryFromXML(PasswordDocsPath, CategoryID);
     }
 
+    public String[] ModifyThisPasswordStrings(int CategoryID, int PassowrdID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryPasswordModifyValuesXML(PasswordDocsPath, CategoryID, PassowrdID);
+    }
+
+
     /// XML içerisinden Kategorileri listeler.
     public void CategoryLister() throws ParserConfigurationException, SAXException, IOException
     {
@@ -85,7 +93,8 @@ public class AlgorithmAES
         return XMLOperations.CategoryPasswordArrayXML(PasswordDocsPath, CategoryID);
     }
 
-    public String GetCategoryNameFromID(int CategoryID) throws ParserConfigurationException, SAXException, IOException {
+    public String GetCategoryNameFromID(int CategoryID) throws ParserConfigurationException, SAXException, IOException
+    {
         return XMLOperations.CategoryReturnerFromXML(PasswordDocsPath, CategoryID);
     }
 

@@ -197,6 +197,16 @@ public class PasswordFrame extends JFrame {
                                 JOptionPane.showMessageDialog(null, jList1.getSelectedValue() + " Password Copied to Clipboard, use Ctrl+V for paste", "Success", JOptionPane.INFORMATION_MESSAGE);
                             }
                         }
+                        else if(i == 1)
+                        {
+                            if(!jList1.isSelectionEmpty())
+                            {
+                                PasswordAddModify ModifyForm = new PasswordAddModify(FromClass, CategoryNum, jList1.getSelectedIndex());
+                                ModifyForm.setVisible(true);
+                                setVisible(false);
+                                jList1.setModel(PasswordModel());
+                            }
+                        }
                         else if (i == 2)
                         {
                             if(!jList1.isSelectionEmpty())

@@ -25,7 +25,9 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
      * Creates new form CreateCategoryFrame
      */
     AlgorithmAES FromClass;
-    public CreateCategoryFrame() {
+    int CategoryNum = -1;
+    public CreateCategoryFrame()
+    {
         initComponents();
     }
 
@@ -33,6 +35,12 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
     {
         FromClass = AesClass;
         initComponents();
+    }
+
+    public CreateCategoryFrame(AlgorithmAES AesClass, int CategoryID)
+    {
+        FromClass = AesClass;
+        CategoryNum = CategoryID;
     }
 
     /**
@@ -124,18 +132,25 @@ public class CreateCategoryFrame extends javax.swing.JFrame {
         this.setLocation(xLoc,yLoc);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToggleButton1(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException {
-        if(jTextField1.getText().length() != 0)
+    private void jToggleButton1(java.awt.event.ActionEvent evt) throws IOException, SAXException, ParserConfigurationException
+    {
+        if(CategoryNum == -1)
         {
-            FromClass.NewCategoryAdder(jTextField1.getText());
-            JOptionPane.showMessageDialog(null, "Category Created", "Success", JOptionPane.INFORMATION_MESSAGE);
-            setVisible(false);
-            CategoryFrame newFrame = new CategoryFrame(FromClass);
-            newFrame.setVisible(true);
+            if(jTextField1.getText().length() != 0)
+            {
+                FromClass.NewCategoryAdder(jTextField1.getText());
+                JOptionPane.showMessageDialog(null, "Category Created", "Success", JOptionPane.INFORMATION_MESSAGE);
+                setVisible(false);
+                CategoryFrame newFrame = new CategoryFrame(FromClass);
+                newFrame.setVisible(true);
+            }
+            else
+                JOptionPane.showMessageDialog(null, "Enter a Category Name !", "Error", JOptionPane.ERROR_MESSAGE);
         }
         else
-            JOptionPane.showMessageDialog(null, "Enter a Category Name !", "Error", JOptionPane.ERROR_MESSAGE);
+        {
 
+        }
     }
 
     /**
