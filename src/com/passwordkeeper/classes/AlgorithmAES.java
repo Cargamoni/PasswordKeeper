@@ -1,55 +1,42 @@
-package com.passwordkeeper;
+package com.passwordkeeper.classes;
 
-import jdk.jfr.Category;
 import org.xml.sax.SAXException;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Scanner;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.sound.sampled.Clip;
-import javax.sql.rowset.spi.XmlReader;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 public class AlgorithmAES
 {
     // Yapılacaklar
-    // Debug Yapılacak Her Bir Adım Baştan Deneneck
-    // Arayüz oluşturulacak
 
-    // Ekstralar
-    // Yeni oluşturmada çift parola istenecek
-
-
+    //Ekstralar
+    //Parola Yoksa geri dönme yapılabilir.
     public static SecretKey KeyAES = null;
     public static final String Algorithm = "AES";
     private static String EnteredPassword;
     private static final String PasswordDocsPath = "files/password.xml";
 
     public Boolean CategoryChecker;
-
     OperationXML XMLOperations;
-
 
     public AlgorithmAES()
     {
         XMLOperations = new OperationXML();
     }
-
     public AlgorithmAES(String Password) throws ParserConfigurationException, SAXException, IOException
     {
         XMLOperations = new OperationXML();
@@ -60,65 +47,80 @@ public class AlgorithmAES
     }
 
     /// XML içerisine Kategori ekleme işlemini yapan Kod burası.
-    public void NewCategoryAdder()
+    public void NewCategoryAdder(String CategoryName)
     {
-        XMLOperations.AddCategoryXML(PasswordDocsPath);
-        System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
-        Scanner Motion = new Scanner(System.in);
-        char MotionChar = Motion.nextLine().toCharArray()[0];
-        if(MotionChar == '1')
-            NewCategoryAdder();
-        else if (MotionChar == '2')
-            NewPasswordAdder();
-        else if (MotionChar == '3')
-            return;
-        else
-            System.out.println("Wrong Input");
+        XMLOperations.AddCategoryXML(PasswordDocsPath, CategoryName);
     }
 
     /// XML içerisine kategoriye ait yeni parola ekleme işlemini gerçekleştirir.
-    public void NewPasswordAdder()
+    public void NewPasswordAdder(int CategoryID, String PasswordName, String NewPassword)
     {
-        Scanner Motion = new Scanner(System.in);
-        System.out.print("Which Category : ");
-        String CategoryName = Motion.nextLine();
-        XMLOperations.AddPasswordToCategoryXML(PasswordDocsPath, CategoryName, EnteredPassword);
-        System.out.println("Category Created. 1 for add new one, 2 for add password, 3 for exit.");
-        char MotionChar = Motion.nextLine().toCharArray()[0];
-        if(MotionChar == '1')
-            NewCategoryAdder();
-        else if (MotionChar == '2')
-            NewPasswordAdder();
-        else if (MotionChar == '3')
-            return;
-        else
-            System.out.println("Wrong Input");
+        XMLOperations.AddPasswordToCategoryXML(PasswordDocsPath, CategoryID, EnteredPassword, PasswordName, NewPassword);
     }
 
+    public void DeleteThisPassword(int CategoryID, int PasswordID)
+    {
+        XMLOperations.DeletePasswordFromXML(PasswordDocsPath, CategoryID, PasswordID);
+    }
+
+    public void DeleteThisCategory(int CategoryID)
+    {
+        XMLOperations.DeleteCategoryFromXML(PasswordDocsPath, CategoryID);
+    }
+
+    public String[] ModifyThisPasswordStrings(int CategoryID, int PassowrdID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryPasswordModifyValuesXML(PasswordDocsPath, CategoryID, PassowrdID);
+    }
+
+    public String CategoryNameReturner(int CategoryID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryReturnerFromXML(PasswordDocsPath, CategoryID);
+    }
+
+    public void CategoryModifier(int CategoryID, String CategoryName) throws SAXException, TransformerException, ParserConfigurationException, IOException {
+        XMLOperations.CategoryModifyFromXML(PasswordDocsPath, CategoryID, CategoryName);
+    }
     /// XML içerisinden Kategorileri listeler.
     public void CategoryLister() throws ParserConfigurationException, SAXException, IOException
     {
         XMLOperations.CategoryListerXML(PasswordDocsPath);
     }
 
-    public void CopyPasswordToClipBoard() throws IOException, SAXException, ParserConfigurationException
+    /// XML içerisinden Kategorileri listeler.
+    public String[] CategoryListReturner() throws ParserConfigurationException, SAXException, IOException
     {
-        System.out.println("Welcome to Reader");
-        CategoryLister();
-        Scanner Input = new Scanner(System.in);
-        System.out.print("Please Select a Category (Just Number): ");
-        int CategoryID = Integer.parseInt(Input.nextLine());
+        return XMLOperations.CategoryListArrayXML(PasswordDocsPath);
+    }
 
-        XMLOperations.CategoryPasswordListerXML(PasswordDocsPath, CategoryID);
-        System.out.print("Wich Password do you want to Copy (Just Number) : ");
-        int TypeID = Integer.parseInt(Input.nextLine());
+    public String[] CategoryPasswordsReturner(int CategoryID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryPasswordArrayXML(PasswordDocsPath, CategoryID);
+    }
+
+    public String GetCategoryNameFromID(int CategoryID) throws ParserConfigurationException, SAXException, IOException
+    {
+        return XMLOperations.CategoryReturnerFromXML(PasswordDocsPath, CategoryID);
+    }
+
+    public void CopyPasswordToClipBoard(int CategoryID, int TypeID) throws IOException, SAXException, ParserConfigurationException
+    {
+        //System.out.println("Welcome to Reader");
+        //CategoryLister();
+        //Scanner Input = new Scanner(System.in);
+        //System.out.print("Please Select a Category (Just Number): ");
+        //int CategoryID = Integer.parseInt(Input.nextLine());
+
+        //XMLOperations.CategoryPasswordListerXML(PasswordDocsPath, CategoryID);
+        //System.out.print("Wich Password do you want to Copy (Just Number) : ");
+        //int TypeID = Integer.parseInt(Input.nextLine());
         byte[] CipherTextFromXML = XMLOperations.GetChoosenPasswordXML(PasswordDocsPath, CategoryID, TypeID);
         String YourPasswordIs = Decryption(CipherTextFromXML);
 
         StringSelection SelectPassword = new StringSelection(YourPasswordIs);
         Clipboard ClipBoard = Toolkit.getDefaultToolkit().getSystemClipboard();
         ClipBoard.setContents(SelectPassword,SelectPassword);
-        System.out.println("Your password copied to clipboard. Press Ctrl+V for paste !");
+        //System.out.println("Your password copied to clipboard. Press Ctrl+V for paste !");
     }
 
     /// Parolayı MD5'e dönüştürmek için kullanılır.
